@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Sabin Git</title>
 </head>
 <body>
-    <h2 th:text="Sabin">Home Page</h2>
+    <h2 th:text="IndexPage">Home Page</h2>
+    <ul>
+        <li><a th:href="@{/login}">Login Page</a></li>
+        <li><a th:href="@{/registration}">SignUp Page</a></li>
+    </ul>
 
 </body>
 </html>
