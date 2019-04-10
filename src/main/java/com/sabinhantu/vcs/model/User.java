@@ -1,6 +1,7 @@
 package com.sabinhantu.vcs.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -11,6 +12,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Username field must not be empty")
     private String username;
 
     private String password;

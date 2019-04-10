@@ -3,12 +3,25 @@
 
 <body>
 
+    <div sec:authorize="isAuthenticated()">
+        <p><a th:href="@{/logout}">Logout</a></p>
+    </div>
+
     <h2 th:text="#{welcome}">Welcome</h2>
 
     <ul>
         <li><a th:href="@{/login}">Login Page</a></li>
         <li><a th:href="@{/registration}">SignUp Page</a></li>
     </ul>
+
+    <table>
+        <tr>
+            <th>USERNAME</th>
+        </tr>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.username}">Onions</td>
+        </tr>
+    </table>
 
 
 </body>
