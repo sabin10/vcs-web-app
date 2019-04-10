@@ -2,6 +2,8 @@
 <html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'user')}">
 
 <body>
+    <h1>Welcome, <span th:text="${currentuser}">Test</span></h1>
+    <h3>List of your repositories</h3>
 
 </body>
 </html>
