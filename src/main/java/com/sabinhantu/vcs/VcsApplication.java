@@ -20,6 +20,6 @@ public class VcsApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        userService.save(new User("sabin", "sabin"));
+        userService.save(new User("sabin", "sabin@gmail.com","sabin"));
     }
 }

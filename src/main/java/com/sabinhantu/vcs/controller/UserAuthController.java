@@ -52,10 +52,8 @@ public class UserAuthController {
 
     @PostMapping("/login")
     public String postLogin(@ModelAttribute(name = "userForm") User userForm, Model model) {
-
-        String username = userForm.getUsername();
-        String password = userForm.getPassword();
-
+//        String username = userForm.getUsername();
+//        String password = userForm.getPassword();
         return "redirect:/index";
     }
 }

@@ -17,9 +17,11 @@
     <table>
         <tr>
             <th>USERNAME</th>
+            <th>EMAIL</th>
         </tr>
         <tr th:each="user : ${users}">
             <td th:text="${user.username}">Onions</td>
+            <td th:text="${user.email}">Onions</td>
         </tr>
     </table>
 

@@ -20,6 +20,9 @@ public class SecurityServiceImpl implements SecurityService {
 
     public static final Logger logger = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
+    /**
+     * @return username of Logged User
+     */
     @Override
     public String findLoggedInUsername() {
         //security context will provide if the user was loggedIn in prev session
