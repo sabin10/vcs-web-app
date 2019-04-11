@@ -21,5 +21,9 @@ public class VcsApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         userService.save(new User("sabin", "sabin@gmail.com","sabin"));
+        userService.save(new User("vasile", "vasile@gmail.com","vasile"));
+        userService.save(new User("cosmin", "cosmin@gmail.com","cosmin"));
+        userService.save(new User("voinea", "voinea@gmail.com","voinea"));
+        userService.save(new User("elon", "elon@gmail.com","elon"));
     }
 }

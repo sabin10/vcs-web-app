@@ -18,13 +18,17 @@ public class AccountController {
     @GetMapping("/user")
     public String getAccount(Model model) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String username = null;
         if (principal instanceof UserDetails) {
-            String username = ((UserDetails)principal).getUsername();
-            model.addAttribute("currentuser", username);
+            username = ((UserDetails)principal).getUsername();
         } else {
-            String username = principal.toString();
-            model.addAttribute("currentuser", username);
+            username = principal.toString();
         }
+
+        model.addAttribute("currentuser", username);
+        // TODO: ar trebui cu try and catch? Intreaba Karla
+
 
         return "user";
     }

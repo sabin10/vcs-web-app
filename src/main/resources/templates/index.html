@@ -16,12 +16,14 @@
 
     <table>
         <tr>
-            <th>USERNAME</th>
+            <th>USER</th>
             <th>EMAIL</th>
+            <th>PASS</th>
         </tr>
         <tr th:each="user : ${users}">
             <td th:text="${user.username}">Onions</td>
             <td th:text="${user.email}">Onions</td>
+            <td th:text="${user.password}">Onions</td>
         </tr>
     </table>
 
