@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class IndexController {
-
     @Autowired
     private UserService userService;
 
@@ -22,5 +21,4 @@ public class IndexController {
     public String about() {
         return "about";
     }
-
 }

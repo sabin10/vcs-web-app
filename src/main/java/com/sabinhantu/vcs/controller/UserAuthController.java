@@ -38,10 +38,8 @@ public class UserAuthController {
         if (bindingResult.hasErrors()) {
             return "registration";
         }
-
         userService.save(userForm);
         securityService.autoLogin(userForm.getUsername(), userForm.getPasswordConfirm());
-
         return "redirect:/index";
     }
 
@@ -52,8 +50,6 @@ public class UserAuthController {
 
     @PostMapping("/login")
     public String postLogin(@ModelAttribute(name = "userForm") User userForm, Model model) {
-//        String username = userForm.getUsername();
-//        String password = userForm.getPassword();
         return "redirect:/index";
     }
 }

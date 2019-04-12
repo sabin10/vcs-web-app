@@ -18,12 +18,12 @@
         <tr>
             <th>USER</th>
             <th>EMAIL</th>
-            <th>PASS</th>
+            <th>ID</th>
         </tr>
         <tr th:each="user : ${users}">
             <td th:text="${user.username}">Onions</td>
             <td th:text="${user.email}">Onions</td>
-            <td th:text="${user.password}">Onions</td>
+            <td th:text="${user.id}">Onions</td>
         </tr>
     </table>
 
