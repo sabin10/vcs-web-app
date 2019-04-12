@@ -9,7 +9,7 @@
             <th>REPOS</th>
         </tr>
         <tr th:each="repository : ${repositories}">
-            <td th:text="${repository.title}">Onions</td>
+            <td> <a th:text="${repository.title}" th:href="@{'/' + ${userRequested} + '/' + ${repository.url}}">Repository Url</a></td>
         </tr>
     </table>
 

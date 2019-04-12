@@ -1,7 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'home')}">
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'user')}">
 
 <body>
-<h1><span th:text="${repository.title}">Test</span></h1>
+    <h1><span th:text="${repository.title}">Repository Title</span></h1>
+    <h3><span th:text="${repository.description}">Repository Title</span></h3>
+    <table>
+        <tr>
+            <th>USER</th>
+        </tr>
+        <tr th:each="userOwner : ${usersOwners}">
+            <td th:text="${userOwner.username}">Onions</td>
+        </tr>
+    </table>
+    <p><a th:href="@{'/' + ${user.username} + '/' + ${repository.url} + '/settings'}">Settings</a></p>
 </body>
 </html>

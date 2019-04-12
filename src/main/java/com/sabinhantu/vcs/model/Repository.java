@@ -15,6 +15,8 @@ public class Repository {
 
     private String url;
 
+    private String description;
+
     @ManyToMany(mappedBy = "repositories")
     private Set<User> users;
 
@@ -26,6 +28,11 @@ public class Repository {
         this();
         this.title = title;
         this.url = titleToUrl(title).toString();
+    }
+
+    public Repository(String title, String description) {
+        this(title);
+        this.description = description;
     }
 
     public Long getId() {
@@ -50,6 +57,14 @@ public class Repository {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Set<User> getUsers() {

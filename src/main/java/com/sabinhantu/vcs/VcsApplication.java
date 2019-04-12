@@ -29,6 +29,7 @@ public class VcsApplication implements CommandLineRunner {
         User vasile = new User("vasile", "vasile@gmail.com","vasile");
         Repository rep1 = new Repository("sabin repo");
         Repository rep2 = new Repository("vasile repo");
+        rep2.setDescription("Developed with java");
 
         repositoryRepository.save(rep1);
         repositoryRepository.save(rep2);
