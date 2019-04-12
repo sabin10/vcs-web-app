@@ -4,7 +4,14 @@
 <body>
     <h1><span th:text="${userRequested}">Test</span></h1>
     <h3>List of your repositories</h3>
-    <a th:href="@{/currentuser}">Click</a>
+    <table>
+        <tr>
+            <th>REPOS</th>
+        </tr>
+        <tr th:each="repository : ${repositories}">
+            <td th:text="${repository.title}">Onions</td>
+        </tr>
+    </table>
 
 </body>
 </html>

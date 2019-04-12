@@ -1,19 +1,29 @@
 package com.sabinhantu.vcs.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Role {
+public class Repository {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String title;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "repositories")
     private Set<User> users;
+
+    public Repository() {
+        users = new HashSet<>();
+    }
+
+    public Repository(String title) {
+        this();
+        this.title = title;
+    }
 
     public Long getId() {
         return id;
@@ -23,12 +33,12 @@ public class Role {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Set<User> getUsers() {

@@ -1,10 +1,10 @@
 package com.sabinhantu.vcs.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
 public class User {
 
     @Id
@@ -23,18 +23,25 @@ public class User {
     @ManyToMany
     private Set<Role> roles;
 
+    @ManyToMany
+    @JoinTable(name = "user_repository",
+        joinColumns = {@JoinColumn(name = "user_id")},
+        inverseJoinColumns = {@JoinColumn(name = "repository_id")})
+    private Set<Repository> repositories;
+
     public User() {
+        repositories = new HashSet<>();
     }
 
     public User(String username, String password) {
+        this();
         this.username = username;
         this.password = password;
     }
 
     public User(String username, String email, String password) {
-        this.username = username;
+        this(username, password);
         this.email = email;
-        this.password = password;
     }
 
     public Long getId() {
@@ -83,5 +90,24 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Set<Repository> getRepositories() {
+        return repositories;
+    }
+
+    public void setRepositories(Set<Repository> repositories) {
+        this.repositories = repositories;
+    }
+
+    public void addRepository(Repository repository) {
+        //updating both ends of bidirectional association
+        this.repositories.add(repository);
+        repository.getUsers().add(this);
+    }
+
+    public void removeRepository(Repository repository) {
+        this.repositories.remove(repository);
+        repository.getUsers().remove(this);
     }
 }
