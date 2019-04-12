@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface RepositoryRepository extends JpaRepository<Repository, Long> {
     Repository findByTitle(String title);
+    Repository findByUrl(String url);
     List<Repository> findByUsers_Username(String username);
 }

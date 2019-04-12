@@ -13,6 +13,8 @@ public class Repository {
 
     private String title;
 
+    private String url;
+
     @ManyToMany(mappedBy = "repositories")
     private Set<User> users;
 
@@ -23,6 +25,7 @@ public class Repository {
     public Repository(String title) {
         this();
         this.title = title;
+        this.url = titleToUrl(title).toString();
     }
 
     public Long getId() {
@@ -41,11 +44,36 @@ public class Repository {
         this.title = title;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public Set<User> getUsers() {
         return users;
     }
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    private StringBuilder titleToUrl(String title) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < title.length(); i++) {
+            if (Character.isLetter(title.charAt(i))) {
+                result.append(Character.toLowerCase(title.charAt(i)));
+            } else if (title.charAt(i) == ' '){
+                result.append('-');
+            }
+        }
+        int i = result.length() - 1;
+        while (result.charAt(i) == '-'){
+            result.deleteCharAt(i);
+            i--;
+        }
+        return result;
     }
 }

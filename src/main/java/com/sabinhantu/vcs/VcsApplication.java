@@ -27,8 +27,8 @@ public class VcsApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         User sabin = new User("sabin", "sabin@gmail.com","sabin");
         User vasile = new User("vasile", "vasile@gmail.com","vasile");
-        Repository rep1 = new Repository("sabinrepo");
-        Repository rep2 = new Repository("vasilerepo");
+        Repository rep1 = new Repository("sabin repo");
+        Repository rep2 = new Repository("vasile repo");
 
         repositoryRepository.save(rep1);
         repositoryRepository.save(rep2);

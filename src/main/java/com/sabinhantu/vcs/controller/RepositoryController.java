@@ -18,12 +18,12 @@ public class RepositoryController {
     @Autowired
     private RepositoryRepository repositoryRepository;
 
-    @GetMapping("/{username}/{repositoryName}")
+    @GetMapping("/{username}/{repositoryUrl}")
     public String userRepository(@PathVariable final String username,
-                                 @PathVariable final String repositoryName,
+                                 @PathVariable final String repositoryUrl,
                                  Model model) {
         User userRequested = userService.findByUsername(username);
-        Repository repositoryRequested = repositoryRepository.findByTitle(repositoryName);
+        Repository repositoryRequested = repositoryRepository.findByUrl(repositoryUrl);
         if (userRequested == null || repositoryRequested == null) {
             return "error";
         }
