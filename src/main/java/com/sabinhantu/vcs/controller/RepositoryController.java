@@ -76,6 +76,7 @@ public class RepositoryController {
         return "redirect:/" + usernameUrl + "/" + repositoryUrl;
     }
 
+
     // TODO: Functie asa sau throw exception? intreaba Karla
     private boolean doesRepositoryExist(String username, String repositoryUrl) {
         User userRequested = userService.findByUsername(username);

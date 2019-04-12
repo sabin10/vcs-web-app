@@ -21,14 +21,7 @@ public class AccountController {
 
     @GetMapping("/user")
     public String getAccount(Model model) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        String usernameLoggedIn = null;
-        if (principal instanceof UserDetails) {
-            usernameLoggedIn = ((UserDetails)principal).getUsername();
-        } else {
-            usernameLoggedIn = principal.toString();
-        }
+        String usernameLoggedIn = loggedInUsername();
 
         model.addAttribute("currentuser", usernameLoggedIn);
         // TODO: ar trebui cu try and catch? Intreaba Karla
@@ -45,5 +38,17 @@ public class AccountController {
         model.addAttribute("userRequested", username);
         model.addAttribute("repositories", repositoryRepository.findByUsers_Username(username));
         return "user";
+    }
+
+    public static String loggedInUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String usernameLoggedIn = null;
+        if (principal instanceof UserDetails) {
+            usernameLoggedIn = ((UserDetails)principal).getUsername();
+        } else {
+            usernameLoggedIn = principal.toString();
+        }
+        return usernameLoggedIn;
     }
 }
