@@ -3,7 +3,7 @@
 
 <body>
     <h1><span th:text="${repository.title}">Repository Title</span></h1>
-    <h3><span th:text="${repository.description}">Repository Title</span></h3>
+    <h3><span th:text="${repository.description}">Repository Description</span></h3>
     <table>
         <tr>
             <th>USER</th>
@@ -12,6 +12,6 @@
             <td th:text="${userOwner.username}">Onions</td>
         </tr>
     </table>
-    <p><a th:href="@{'/' + ${user.username} + '/' + ${repository.url} + '/settings'}">Settings</a></p>
+    <p th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${repository.url} + '/settings'}">Settings</a></p>
 </body>
 </html>

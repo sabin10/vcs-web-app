@@ -36,7 +36,9 @@ public class RepositoryController {
         User userRequested = userService.findByUsername(username);
         Repository repositoryRequested = repositoryRepository.findByUrl(repositoryUrl);
         List<User> usersOwners = userRepository.findByRepositories_Url(repositoryUrl);
-        model.addAttribute("user", userRequested);
+        String usernameLoggedIn = AccountController.loggedInUsername();
+        model.addAttribute("userRequested", userRequested);
+        model.addAttribute("usernameLoggedIn", usernameLoggedIn);
         model.addAttribute("repository", repositoryRequested);
         model.addAttribute("usersOwners", usersOwners);
         return "repository";
@@ -46,7 +48,7 @@ public class RepositoryController {
     public String repositorySettings(@PathVariable final String username,
                                      @PathVariable final String repositoryUrl,
                                      Model model) {
-        if (!doesRepositoryExist(username, repositoryUrl)) {
+        if (!doesRepositoryExist(username, repositoryUrl) || !username.equals(AccountController.loggedInUsername())) {
             return "error";
         }
         User userOwner = userService.findByUsername(username);
@@ -63,6 +65,9 @@ public class RepositoryController {
                                                  @PathVariable final String repositoryUrl,
                                                  @ModelAttribute("userForm") User userForm,
                                                  Model model) {
+        if (!usernameUrl.equals(AccountController.loggedInUsername())){
+            return "error";
+        }
         User newMemberUser = userService.findByUsername(userForm.getUsername());
         Repository repository = repositoryRepository.findByUrl(repositoryUrl);
 
