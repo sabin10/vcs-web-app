@@ -1,7 +1,7 @@
 package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.model.User;
-import com.sabinhantu.vcs.repository.RepositoryRepository;
+import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,7 @@ public class AccountController {
     private UserService userService;
 
     @Autowired
-    private RepositoryRepository repositoryRepository;
+    private ProjectRepository projectRepository;
 
     @GetMapping("/user")
     public String getAccount(Model model) {
@@ -36,7 +36,7 @@ public class AccountController {
             return "error";
         }
         model.addAttribute("userRequested", username);
-        model.addAttribute("repositories", repositoryRepository.findByUsers_Username(username));
+        model.addAttribute("projects", projectRepository.findByUsers_Username(username));
         return "user";
     }
 

@@ -1,8 +1,8 @@
 package com.sabinhantu.vcs;
 
-import com.sabinhantu.vcs.model.Repository;
+import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
-import com.sabinhantu.vcs.repository.RepositoryRepository;
+import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,7 +16,7 @@ public class VcsApplication implements CommandLineRunner {
     private UserService userService;
 
     @Autowired
-    private RepositoryRepository repositoryRepository;
+    private ProjectRepository projectRepository;
 
 
     public static void main(String[] args) {
@@ -27,16 +27,16 @@ public class VcsApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         User sabin = new User("sabin", "sabin@gmail.com","sabin");
         User vasile = new User("vasile", "vasile@gmail.com","vasile");
-        Repository rep1 = new Repository("sabin repo");
-        Repository rep2 = new Repository("vasile repo");
+        Project rep1 = new Project("sabin repo");
+        Project rep2 = new Project("vasile repo");
         rep2.setDescription("Developed with java");
 
-        repositoryRepository.save(rep1);
-        repositoryRepository.save(rep2);
+        projectRepository.save(rep1);
+        projectRepository.save(rep2);
 
-        sabin.addRepository(rep1);
-        sabin.addRepository(rep2);
-        vasile.addRepository(rep2);
+        sabin.addProject(rep1);
+        sabin.addProject(rep2);
+        vasile.addProject(rep2);
 
         userService.save(sabin);
         userService.save(vasile);

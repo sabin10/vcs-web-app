@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'addrepository')}">
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'addproject')}">
 
 <body>
 
-    <form class="form-horizontal" action="#" th:action="@{'/' + ${username} + '/' + 'addrepository'}" th:object="${repositoryForm}" method="post">
+    <form class="form-horizontal" action="#" th:action="@{'/' + ${username} + '/' + 'addproject'}" th:object="${projectForm}" method="post">
         <div class="form-group">
             <label class="control-label col-sm-2" for="title">Title</label>
             <div class="col-sm-10">

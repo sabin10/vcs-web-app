@@ -26,11 +26,11 @@ public class User {
     @ManyToMany
     @JoinTable(name = "user_repository",
         joinColumns = {@JoinColumn(name = "user_id")},
-        inverseJoinColumns = {@JoinColumn(name = "repository_id")})
-    private Set<Repository> repositories;
+        inverseJoinColumns = {@JoinColumn(name = "project_id")})
+    private Set<Project> projects;
 
     public User() {
-        repositories = new HashSet<>();
+        projects = new HashSet<>();
     }
 
     public User(String username, String password) {
@@ -92,22 +92,23 @@ public class User {
         this.roles = roles;
     }
 
-    public Set<Repository> getRepositories() {
-        return repositories;
+    public Set<Project> getProjects() {
+        return projects;
     }
 
-    public void setRepositories(Set<Repository> repositories) {
-        this.repositories = repositories;
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
     }
 
-    public void addRepository(Repository repository) {
+    public void addProject(Project project) {
         //updating both ends of bidirectional association
-        this.repositories.add(repository);
-        repository.getUsers().add(this);
+        this.projects.add(project);
+        project.getUsers().add(this);
     }
 
-    public void removeRepository(Repository repository) {
-        this.repositories.remove(repository);
-        repository.getUsers().remove(this);
+    public void removeProject(Project project) {
+        this.projects.remove(project);
+        project.getUsers().remove(this);
     }
 }
+

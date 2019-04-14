@@ -2,10 +2,12 @@ package com.sabinhantu.vcs.repository;
 
 import com.sabinhantu.vcs.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
-    List<User> findByRepositories_Url(String url);
+    List<User> findByProjects_Url(String url);
 }

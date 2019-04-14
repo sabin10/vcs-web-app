@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Repository {
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,20 +19,20 @@ public class Repository {
 
     private String description;
 
-    @ManyToMany(mappedBy = "repositories")
+    @ManyToMany(mappedBy = "projects")
     private Set<User> users;
 
-    public Repository() {
+    public Project() {
         users = new HashSet<>();
     }
 
-    public Repository(String title) {
+    public Project(String title) {
         this();
         this.title = title;
         this.url = titleToUrl(title).toString();
     }
 
-    public Repository(String title, String description) {
+    public Project(String title, String description) {
         this(title);
         this.description = description;
     }

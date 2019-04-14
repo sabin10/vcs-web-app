@@ -1,8 +1,8 @@
 package com.sabinhantu.vcs.controller;
 
-import com.sabinhantu.vcs.model.Repository;
+import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
-import com.sabinhantu.vcs.repository.RepositoryRepository;
+import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.repository.UserRepository;
 import com.sabinhantu.vcs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,41 +14,41 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class AddRepositoryController {
+public class AddProjectController {
     @Autowired
     private UserService userService;
 
     @Autowired
-    private RepositoryRepository repositoryRepository;
+    private ProjectRepository projectRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/addrepository")
+    @GetMapping("/addproject")
     public String moveToAddRepository() {
         String usernameLoggedIn = AccountController.loggedInUsername();
-        return "redirect:/" + usernameLoggedIn + "/addrepository";
+        return "redirect:/" + usernameLoggedIn + "/addproject";
     }
 
-    @GetMapping("/{username}/addrepository")
+    @GetMapping("/{username}/addproject")
     public String showAddRepository(@PathVariable final String username,
                                     Model model) {
         String usernameLoggedIn = AccountController.loggedInUsername();
         model.addAttribute("username", usernameLoggedIn);
-        return "addrepository";
+        return "addproject";
     }
 
-    @PostMapping("/{usernameUrl}/addrepository")
+    @PostMapping("/{usernameUrl}/addproject")
     public String addRepository(@PathVariable final String usernameUrl,
-                                @ModelAttribute("repositoryForm") Repository repositoryForm,
+                                @ModelAttribute("repositoryForm") Project projectForm,
                                 Model model) {
-        Repository newRepository = new Repository(repositoryForm.getTitle(), repositoryForm.getDescription());
+        Project newProject = new Project(projectForm.getTitle(), projectForm.getDescription());
         User currentUser = userService.findByUsername(usernameUrl);
 
-        repositoryRepository.save(newRepository);
-        currentUser.addRepository(newRepository);
+        projectRepository.save(newProject);
+        currentUser.addProject(newProject);
         userRepository.save(currentUser);
 
-        return "redirect:/" + usernameUrl + "/" + newRepository.getUrl();
+        return "redirect:/" + usernameUrl + "/" + newProject.getUrl();
     }
 }

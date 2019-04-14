@@ -3,13 +3,13 @@
 
 <body>
     <h1><span th:text="${userRequested}">Test</span></h1>
-    <h3>List of your repositories</h3>
+    <h3>List of your projects</h3>
     <table>
         <tr>
             <th>REPOS</th>
         </tr>
-        <tr th:each="repository : ${repositories}">
-            <td> <a th:text="${repository.title}" th:href="@{'/' + ${userRequested} + '/' + ${repository.url}}">Repository Url</a></td>
+        <tr th:each="project : ${projects}">
+            <td> <a th:text="${project.title}" th:href="@{'/' + ${userRequested} + '/' + ${project.url}}">Project Url</a></td>
         </tr>
     </table>
 

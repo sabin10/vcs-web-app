@@ -1,8 +1,8 @@
 package com.sabinhantu.vcs.controller;
 
-import com.sabinhantu.vcs.model.Repository;
+import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
-import com.sabinhantu.vcs.repository.RepositoryRepository;
+import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.repository.UserRepository;
 import com.sabinhantu.vcs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,84 +16,85 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 
 @Controller
-public class RepositoryController {
+public class ProjectController {
     @Autowired
     private UserService userService;
 
     @Autowired
-    private RepositoryRepository repositoryRepository;
+    private ProjectRepository projectRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/{username}/{repositoryUrl}")
+    @GetMapping("/{username}/{projectUrl}")
     public String userRepository(@PathVariable final String username,
-                                 @PathVariable final String repositoryUrl,
+                                 @PathVariable final String projectUrl,
                                  Model model) {
-        if (!doesRepositoryExist(username, repositoryUrl)) {
+        if (!doesRepositoryExist(username, projectUrl)) {
             return "error";
         }
         User userRequested = userService.findByUsername(username);
-        Repository repositoryRequested = repositoryRepository.findByUrl(repositoryUrl);
-        List<User> usersOwners = userRepository.findByRepositories_Url(repositoryUrl);
+        Project projectRequested = projectRepository.findByUrl(projectUrl);
+        List<User> usersOwners = userRepository.findByProjects_Url(projectUrl);
         String usernameLoggedIn = AccountController.loggedInUsername();
         model.addAttribute("userRequested", userRequested);
         model.addAttribute("usernameLoggedIn", usernameLoggedIn);
-        model.addAttribute("repository", repositoryRequested);
+        model.addAttribute("project", projectRequested);
         model.addAttribute("usersOwners", usersOwners);
-        return "repository";
+        return "project";
     }
 
-    @GetMapping("/{username}/{repositoryUrl}/settings")
+    @GetMapping("/{username}/{projectUrl}/settings")
     public String repositorySettings(@PathVariable final String username,
-                                     @PathVariable final String repositoryUrl,
+                                     @PathVariable final String projectUrl,
                                      Model model) {
-        if (!doesRepositoryExist(username, repositoryUrl) || !username.equals(AccountController.loggedInUsername())) {
+        if (!doesRepositoryExist(username, projectUrl) || !username.equals(AccountController.loggedInUsername())) {
             return "error";
         }
         User userOwner = userService.findByUsername(username);
-        Repository repositoryRequested = repositoryRepository.findByUrl(repositoryUrl);
+        Project projectRequested = projectRepository.findByUrl(projectUrl);
         model.addAttribute("userOwner", userOwner);
-        model.addAttribute("repository", repositoryRequested);
+        model.addAttribute("project", projectRequested);
 
-        return "repositorysettings";
+        return "projectsettings";
     }
 
+
     //post add member ownership to repository
-    @PostMapping("/{usernameUrl}/{repositoryUrl}/addmember")
+    @PostMapping("/{usernameUrl}/{projectUrl}/addmember")
     public String addMemberOwnershipToRepository(@PathVariable final String usernameUrl,
-                                                 @PathVariable final String repositoryUrl,
+                                                 @PathVariable final String projectUrl,
                                                  @ModelAttribute("userForm") User userForm,
                                                  Model model) {
         if (!usernameUrl.equals(AccountController.loggedInUsername())){
             return "error";
         }
         User newMemberUser = userService.findByUsername(userForm.getUsername());
-        Repository repository = repositoryRepository.findByUrl(repositoryUrl);
+        Project project = projectRepository.findByUrl(projectUrl);
 
-        if (newMemberUser == null || userOwnsRepository(newMemberUser, repository)) {
-            return "redirect:/" + usernameUrl + "/" + repositoryUrl + "/settings?error";
+        if (newMemberUser == null || userOwnsRepository(newMemberUser, project)) {
+            return "redirect:/" + usernameUrl + "/" + projectUrl + "/settings?error";
         }
 
-        newMemberUser.addRepository(repository);
+        newMemberUser.addProject(project);
         userRepository.save(newMemberUser);
 
-        return "redirect:/" + usernameUrl + "/" + repositoryUrl;
+        return "redirect:/" + usernameUrl + "/" + projectUrl;
     }
 
 
     // TODO: Functie asa sau throw exception? intreaba Karla
     private boolean doesRepositoryExist(String username, String repositoryUrl) {
         User userRequested = userService.findByUsername(username);
-        Repository repositoryRequested = repositoryRepository.findByUrl(repositoryUrl);
-        if (userRequested == null || repositoryRequested == null) {
+        Project projectRequested = projectRepository.findByUrl(repositoryUrl);
+        if (userRequested == null || projectRequested == null) {
             return false;
         }
         return true;
     }
 
-    private boolean userOwnsRepository(User user, Repository repository) {
-        if (user.getRepositories().contains(repository))
+    private boolean userOwnsRepository(User user, Project project) {
+        if (user.getProjects().contains(project))
             return true;
         return false;
     }
