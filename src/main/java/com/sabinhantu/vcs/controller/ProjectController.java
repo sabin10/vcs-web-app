@@ -1,5 +1,6 @@
 package com.sabinhantu.vcs.controller;
 
+import com.sabinhantu.vcs.model.Branch;
 import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
 import com.sabinhantu.vcs.repository.ProjectRepository;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class ProjectController {
@@ -36,11 +38,13 @@ public class ProjectController {
             return "error";
         }
         List<User> usersOwners = userRepository.findByProjects_Url(projectUrl);
+        Set<Branch> branches = projectRequested.getBranches();
         String usernameLoggedIn = AccountController.loggedInUsername();
         model.addAttribute("userRequested", userRequested);
         model.addAttribute("usernameLoggedIn", usernameLoggedIn);
         model.addAttribute("project", projectRequested);
         model.addAttribute("usersOwners", usersOwners);
+        model.addAttribute("branches", branches);
         return "project";
     }
 

@@ -125,4 +125,3 @@ public class User {
         project.getUsers().remove(this);
     }
 }
-

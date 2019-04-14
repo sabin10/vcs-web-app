@@ -28,8 +28,17 @@ public class Project {
     @ManyToMany(mappedBy = "projects")
     private Set<User> users;
 
+    /**
+     * Hibernate will not create association table for unidirectional OneToMany
+     */
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "project_id")
+    private Set<Branch> branches;
+
     public Project() {
         users = new HashSet<>();
+        branches = new HashSet<>();
+        branches.add(new Branch("master"));
     }
 
     public Project(String title) {
@@ -89,6 +98,14 @@ public class Project {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public Set<Branch> getBranches() {
+        return branches;
+    }
+
+    public void setBranches(Set<Branch> branches) {
+        this.branches = branches;
     }
 
     private StringBuilder titleToUrl(String title) {

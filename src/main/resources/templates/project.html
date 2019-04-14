@@ -12,6 +12,15 @@
             <td th:text="${userOwner.username}">Onions</td>
         </tr>
     </table>
+
+    <table>
+        <tr>
+            <th>BRANCH</th>
+        </tr>
+        <tr th:each="branch : ${branches}">
+            <td th:text="${branch.name}">Onions</td>
+        </tr>
+    </table>
     <p th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></p>
 </body>
 </html>
