@@ -1,7 +1,10 @@
 package com.sabinhantu.vcs.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +21,9 @@ public class Project {
     private String url;
 
     private String description;
+
+    @CreationTimestamp
+    private Date createdAt;
 
     @ManyToMany(mappedBy = "projects")
     private Set<User> users;
@@ -67,6 +73,14 @@ public class Project {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Set<User> getUsers() {
