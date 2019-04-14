@@ -5,13 +5,9 @@
     <h1><span th:text="${userRequested.username}">Username</span></h1>
     <h4><span th:text="${userRequested.createdAt}">Created At</span></h4>
     <h3>Projects</h3>
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Created At</th>
-        </tr>
+    <table class="table table-striped">
         <tr th:each="project : ${projects}">
-            <td> <a th:text="${project.title}" th:href="@{'/' + ${userRequested} + '/' + ${project.url}}">Project Url</a></td>
+            <td> <a th:text="${project.title}" th:href="@{'/' + ${userRequested.username} + '/' + ${project.url}}">Project Url</a></td>
             <td th:text="${project.createdAt}">Created At</td>
         </tr>
     </table>
