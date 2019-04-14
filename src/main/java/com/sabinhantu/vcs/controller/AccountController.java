@@ -35,7 +35,7 @@ public class AccountController {
         if (userRequested == null) {
             return "error";
         }
-        model.addAttribute("userRequested", username);
+        model.addAttribute("userRequested", userRequested);
         model.addAttribute("projects", projectRepository.findByUsers_Username(username));
         return "user";
     }

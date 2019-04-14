@@ -2,11 +2,11 @@
 <html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'user')}">
 
 <body>
-    <h1><span th:text="${userRequested}">Test</span></h1>
-    <h3>List of your projects</h3>
+    <h1><span th:text="${userRequested.username}">Username</span></h1>
+    <h4><span th:text="${userRequested.createdAt}">Created At</span></h4>
     <table>
         <tr>
-            <th>REPOS</th>
+            <th>Projects</th>
         </tr>
         <tr th:each="project : ${projects}">
             <td> <a th:text="${project.title}" th:href="@{'/' + ${userRequested} + '/' + ${project.url}}">Project Url</a></td>

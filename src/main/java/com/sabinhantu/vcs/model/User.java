@@ -1,6 +1,9 @@
 package com.sabinhantu.vcs.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +22,9 @@ public class User {
 
     @Transient
     private String passwordConfirm;
+
+    @CreationTimestamp
+    private Date createdAt;
 
     @ManyToMany
     private Set<Role> roles;
@@ -82,6 +88,14 @@ public class User {
 
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Set<Role> getRoles() {

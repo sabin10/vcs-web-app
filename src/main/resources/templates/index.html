@@ -19,11 +19,13 @@
             <th>USER</th>
             <th>EMAIL</th>
             <th>ID</th>
+            <th>DATE</th>
         </tr>
         <tr th:each="user : ${users}">
             <td th:text="${user.username}">Onions</td>
             <td th:text="${user.email}">Onions</td>
             <td th:text="${user.id}">Onions</td>
+            <td th:text="${user.createdAt}">Onions</td>
         </tr>
     </table>
 
