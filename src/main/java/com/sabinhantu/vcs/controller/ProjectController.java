@@ -30,11 +30,11 @@ public class ProjectController {
     public String userRepository(@PathVariable final String username,
                                  @PathVariable final String projectUrl,
                                  Model model) {
-        if (!doesRepositoryExist(username, projectUrl)) {
-            return "error";
-        }
         User userRequested = userService.findByUsername(username);
         Project projectRequested = projectRepository.findByUrl(projectUrl);
+        if (!doesRepositoryExist(username, projectUrl) || !userOwnsRepository(userRequested, projectRequested)) {
+            return "error";
+        }
         List<User> usersOwners = userRepository.findByProjects_Url(projectUrl);
         String usernameLoggedIn = AccountController.loggedInUsername();
         model.addAttribute("userRequested", userRequested);
