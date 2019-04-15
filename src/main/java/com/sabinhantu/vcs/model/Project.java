@@ -28,11 +28,6 @@ public class Project {
     @ManyToMany(mappedBy = "projects")
     private Set<User> users;
 
-    /**
-     * Hibernate will not create association table for unidirectional OneToMany
-     * CascadeType.ALL => branches.add(new Branch()) will save the new Branch directly on Branch Table
-     * BranchRepository interface is no needed
-     */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
     private Set<Branch> branches;
@@ -108,6 +103,10 @@ public class Project {
 
     public void setBranches(Set<Branch> branches) {
         this.branches = branches;
+    }
+
+    public void addBranchWithName(String branchName) {
+        branches.add(new Branch(branchName));
     }
 
     private StringBuilder titleToUrl(String title) {

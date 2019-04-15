@@ -21,6 +21,8 @@ public class Branch {
     @CreationTimestamp
     private Date createdAt;
 
+
+    //todo: constructor la care fiecare branch nou creat, copiaza branchul "master"
     public Branch() {
 
     }

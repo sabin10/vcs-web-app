@@ -33,6 +33,7 @@ public class VcsApplication implements CommandLineRunner {
         rep2.setDescription("Developed with java");
 
         rep1.getBranches().add(new Branch("branch-sabin"));
+        rep1.addBranchWithName("branch-3");
         projectRepository.save(rep1);
         projectRepository.save(rep2);
 

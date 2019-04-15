@@ -82,7 +82,7 @@ public class ProjectController {
         newMemberUser.addProject(project);
         userRepository.save(newMemberUser);
 
-        return "redirect:/" + usernameUrl + "/" + projectUrl;
+        return "redirect:/" + usernameUrl + "/" + projectUrl + "/settings";
     }
 
     @GetMapping("/{usernameUrl}/{projectId}/delete")
@@ -100,7 +100,6 @@ public class ProjectController {
         projectRepository.deleteById(Long.parseLong(projectId));
         return "redirect:/" + usernameUrl;
     }
-
 
     // TODO: Functie asa sau throw exception? intreaba Karla
     protected boolean doesRepositoryExist(String username, String repositoryUrl) {
