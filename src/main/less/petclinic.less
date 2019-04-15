@@ -18,6 +18,7 @@
 @spring-brown:      #34302D;
 @spring-grey:       #838789;
 @spring-light-grey: #f1f1f1;
+@spring-red:        #8B0000;
 
 @body-bg:                           @spring-light-grey;
 @text-color:                        @spring-brown;
@@ -78,6 +79,24 @@
   .open .dropdown-toggle& {
     background-color: @spring-brown;
     border-color: @spring-brown;
+  }
+}
+
+.btn-delete {
+  border-width: 2px;
+  transition: border 0.15s;
+  -webkit-transition: border 0.15s;
+  -moz-transition: border 0.15s;
+  -o-transition: border 0.15s;
+  -ms-transition: border 0.15s;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active,
+  .open .dropdown-toggle& {
+    background-color: @spring-red;
+    border-color: @spring-red;
   }
 }
 

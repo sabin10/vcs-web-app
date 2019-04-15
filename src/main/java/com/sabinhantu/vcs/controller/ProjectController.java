@@ -37,14 +37,10 @@ public class ProjectController {
         if (!doesRepositoryExist(username, projectUrl) || !userOwnsRepository(userRequested, projectRequested)) {
             return "error";
         }
-        List<User> usersOwners = userRepository.findByProjects_Url(projectUrl);
-        Set<Branch> branches = projectRequested.getBranches();
         String usernameLoggedIn = AccountController.loggedInUsername();
         model.addAttribute("userRequested", userRequested);
         model.addAttribute("usernameLoggedIn", usernameLoggedIn);
         model.addAttribute("project", projectRequested);
-        model.addAttribute("usersOwners", usersOwners);
-        model.addAttribute("branches", branches);
         return "project";
     }
 
@@ -56,10 +52,13 @@ public class ProjectController {
             return "error";
         }
         User userOwner = userService.findByUsername(username);
+        List<User> usersOwners = userRepository.findByProjects_Url(projectUrl);
         Project projectRequested = projectRepository.findByUrl(projectUrl);
+        Set<Branch> branches = projectRequested.getBranches();
+        model.addAttribute("usersOwners", usersOwners);
         model.addAttribute("userOwner", userOwner);
         model.addAttribute("project", projectRequested);
-
+        model.addAttribute("branches", branches);
         return "projectsettings";
     }
 
@@ -86,9 +85,25 @@ public class ProjectController {
         return "redirect:/" + usernameUrl + "/" + projectUrl;
     }
 
+    @GetMapping("/{usernameUrl}/{projectId}/delete")
+    public String deleteProject(@PathVariable final String usernameUrl,
+                                @PathVariable final String projectId) {
+        User userRequested = userService.findByUsername(usernameUrl);
+        Project project = projectRepository.getOne(Long.parseLong(projectId));
+        Set<User> usersOwners = project.getUsers();
+
+        /**ManyToMany DELETE**/
+        for (User owner : usersOwners) {
+            owner.getProjects().remove(project);
+        }
+        project.getUsers().clear();
+        projectRepository.deleteById(Long.parseLong(projectId));
+        return "redirect:/" + usernameUrl;
+    }
+
 
     // TODO: Functie asa sau throw exception? intreaba Karla
-    private boolean doesRepositoryExist(String username, String repositoryUrl) {
+    protected boolean doesRepositoryExist(String username, String repositoryUrl) {
         User userRequested = userService.findByUsername(username);
         Project projectRequested = projectRepository.findByUrl(repositoryUrl);
         if (userRequested == null || projectRequested == null) {
@@ -97,7 +112,7 @@ public class ProjectController {
         return true;
     }
 
-    private boolean userOwnsRepository(User user, Project project) {
+    protected boolean userOwnsRepository(User user, Project project) {
         if (user.getProjects().contains(project))
             return true;
         return false;

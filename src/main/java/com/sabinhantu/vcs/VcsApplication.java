@@ -1,5 +1,6 @@
 package com.sabinhantu.vcs;
 
+import com.sabinhantu.vcs.model.Branch;
 import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
 import com.sabinhantu.vcs.repository.ProjectRepository;
@@ -31,6 +32,7 @@ public class VcsApplication implements CommandLineRunner {
         Project rep2 = new Project("vasile repo");
         rep2.setDescription("Developed with java");
 
+        rep1.getBranches().add(new Branch("branch-sabin"));
         projectRepository.save(rep1);
         projectRepository.save(rep2);
 

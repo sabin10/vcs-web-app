@@ -30,8 +30,10 @@ public class Project {
 
     /**
      * Hibernate will not create association table for unidirectional OneToMany
+     * CascadeType.ALL => branches.add(new Branch()) will save the new Branch directly on Branch Table
+     * BranchRepository interface is no needed
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
     private Set<Branch> branches;
 

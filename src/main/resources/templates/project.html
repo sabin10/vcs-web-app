@@ -4,21 +4,11 @@
 <body>
     <h1><span th:text="${project.title}">Project Title</span></h1>
     <h3><span th:text="${project.description}">Project Description</span></h3>
-    <table>
+    <table class="table table-striped">
         <tr>
-            <th>USER</th>
-        </tr>
-        <tr th:each="userOwner : ${usersOwners}">
-            <td th:text="${userOwner.username}">Onions</td>
-        </tr>
-    </table>
-
-    <table>
-        <tr>
-            <th>BRANCH</th>
-        </tr>
-        <tr th:each="branch : ${branches}">
-            <td th:text="${branch.name}">Onions</td>
+            <th>0 commits</th>
+            <th>master</th>
+            <th th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></th>
         </tr>
     </table>
     <p th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></p>
