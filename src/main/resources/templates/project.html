@@ -9,7 +9,7 @@
             <th>0 commits</th>
             <th>
                 <select>
-                    <option value="">Select branch</option>
+                    <!--<option value="">Select branch</option>-->
                     <option th:each="branch : ${branches}"
                             th:value="${branch.name}"
                             th:text="${branch.name}"></option>

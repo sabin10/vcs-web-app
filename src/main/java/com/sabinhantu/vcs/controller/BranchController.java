@@ -2,10 +2,12 @@ package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.model.Branch;
 import com.sabinhantu.vcs.model.Project;
+import com.sabinhantu.vcs.model.User;
 import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,30 +26,38 @@ public class BranchController {
     //TODO: MERGE CUSTOM BRANCH TO MASTER
 
 
-    @GetMapping("/{username}/{projectUrl}/master")
+    @GetMapping("/{username}/{projectUrl}/tree/master")
     public String toMasterBranch(@PathVariable final String username,
                                  @PathVariable final String projectUrl) {
         return "redirect:/" + username + "/" + projectUrl;
     }
 
     //TODO:?????????????????
-//    @GetMapping("/{username}/{projectUrl}/{branchName}")
-//    public String toCustomBranch(@PathVariable final String username,
-//                                 @PathVariable final String projectUrl,
-//                                 @PathVariable final String branchName) {
-//        Project project = projectRepository.findByUrl(projectUrl);
-//        try {
-//            Set<Branch> branches = project.getBranches();
-//            for (Branch branch : branches) {
-//                if (branch.getName().equals(branchName))
-//                    return "redirect:/" + username + "/" + projectUrl;
-//            }
-//        } catch (NullPointerException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return "error";
-//    }
+    @GetMapping("/{username}/{projectUrl}/tree/{branchName}")
+    public String toCustomBranch(@PathVariable final String username,
+                                 @PathVariable final String projectUrl,
+                                 @PathVariable final String branchName,
+                                 Model model) {
+        Project project = projectRepository.findByUrl(projectUrl);
+        try {
+            Set<Branch> branches = project.getBranches();
+            for (Branch branch : branches) {
+                if (branch.getName().equals(branchName)) {
+                    String usernameLoggedIn = AccountController.loggedInUsername();
+                    User userRequested = userService.findByUsername(username);
+                    model.addAttribute("userRequested", userRequested);
+                    model.addAttribute("usernameLoggedIn", usernameLoggedIn);
+                    model.addAttribute("project", project);
+                    model.addAttribute("branches", branches);
+                    return "project";
+                }
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        return "error";
+    }
 
     @PostMapping("/{username}/{projectUrl}/addbranch")
     public String addBranch(@ModelAttribute("branchForm") Branch branchForm,

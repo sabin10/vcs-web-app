@@ -113,7 +113,7 @@ public class Project {
     private StringBuilder titleToUrl(String title) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < title.length(); i++) {
-            if (Character.isLetter(title.charAt(i))) {
+            if (Character.isLetter(title.charAt(i))){
                 result.append(Character.toLowerCase(title.charAt(i)));
             } else if (title.charAt(i) == ' '){
                 result.append('-');
