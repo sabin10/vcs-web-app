@@ -43,6 +43,12 @@
         </div>
     </div>
 
+    <div th:if="${param.branchnameerror}">
+        <div class="alert alert-danger">
+            Inappropriate name for a branch. It should not contains blank spaces.
+        </div>
+    </div>
+
     <table>
         <tr th:each="branch : ${branches}">
             <td th:text="${branch.name}">Onions</td>

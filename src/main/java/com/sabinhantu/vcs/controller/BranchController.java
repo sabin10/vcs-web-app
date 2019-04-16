@@ -21,7 +21,7 @@ public class BranchController {
     private ProjectRepository projectRepository;
 
 
-    //TODO: MERGE BRANCH TO MASTER
+    //TODO: MERGE CUSTOM BRANCH TO MASTER
 
 
     @GetMapping("/{username}/{projectUrl}/master")
@@ -53,6 +53,9 @@ public class BranchController {
     public String addBranch(@ModelAttribute("branchForm") Branch branchForm,
                             @PathVariable final String username,
                             @PathVariable final String projectUrl) {
+        if (branchForm.getName().contains(" ")) {
+            return "redirect:/" + username + "/" + projectUrl + "/settings?branchnameerror";
+        }
         Project project = projectRepository.findByUrl(projectUrl);
         if (!checkBranchAvailable(project, branchForm.getName())) {
             return "redirect:/" + username + "/" + projectUrl + "/settings?branchexist";
@@ -80,8 +83,7 @@ public class BranchController {
                 return "redirect:/" + username + "/" + projectUrl + "/settings";
             }
         }
-
-        //will run only if the branch doesn't exist
+        //run only if the branch doesn't exist
         return "redirect:/" + username + "/" + projectUrl + "/settings?branchnotexist";
     }
 
