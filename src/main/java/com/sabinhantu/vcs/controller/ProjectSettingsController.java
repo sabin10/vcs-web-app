@@ -1,5 +1,6 @@
 package com.sabinhantu.vcs.controller;
 
+import com.sabinhantu.vcs.form.ProjectForm;
 import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
 import com.sabinhantu.vcs.repository.ProjectRepository;
@@ -32,12 +33,17 @@ public class ProjectSettingsController {
     @PostMapping("/{usernameUrl}/{projectUrl}/edit")
     public String editProjectCredentials(@PathVariable final String usernameUrl,
                                          @PathVariable final String projectUrl,
-                                         @ModelAttribute("projectForm") Project projectForm) {
+                                         @ModelAttribute("projectForm") ProjectForm projectForm) {
         User user = userService.findByUsername(usernameUrl);
         Set<Project> projects = user.getProjects();
         for (Project project : projects) {
             if (project.getUrl().equals(projectUrl)) {
-                project.setTitle(projectForm.getTitle());
+                if (!checkIfFormInputEmpty(projectForm.getTitle())) {
+                    project.setTitle(projectForm.getTitle());
+                }
+                if (!checkIfFormInputEmpty(projectForm.getDescription())) {
+                    project.setDescription(projectForm.getDescription());
+                }
                 projectRepository.save(project);
                 return "redirect:/{usernameUrl}/" + project.getUrl();
             }
@@ -83,6 +89,13 @@ public class ProjectSettingsController {
         project.getUsers().clear();
         projectRepository.deleteById(Long.parseLong(projectId));
         return "redirect:/" + usernameUrl;
+    }
+
+    protected boolean checkIfFormInputEmpty(String formParameter) {
+        if (formParameter.trim().compareTo("") == 0) {
+            return true;
+        }
+        return false;
     }
 
 }
