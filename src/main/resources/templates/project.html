@@ -7,7 +7,14 @@
     <table class="table table-striped">
         <tr>
             <th>0 commits</th>
-            <th>master</th>
+            <th>
+                <select>
+                    <option value="">Select branch</option>
+                    <option th:each="branch : ${branches}"
+                            th:value="${branch.name}"
+                            th:text="${branch.name}"></option>
+                </select>
+            </th>
             <th th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></th>
         </tr>
     </table>

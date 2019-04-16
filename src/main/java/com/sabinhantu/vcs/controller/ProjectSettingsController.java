@@ -48,7 +48,6 @@ public class ProjectSettingsController {
                 return "redirect:/{usernameUrl}/" + project.getUrl();
             }
         }
-
         return "redirect:/" + usernameUrl + "/" + projectUrl + "/settings";
     }
 

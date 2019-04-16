@@ -35,10 +35,12 @@ public class ProjectController {
         if (!doesRepositoryExist(username, projectUrl) || !userOwnsRepository(userRequested, projectRequested)) {
             return "error";
         }
+        Set<Branch> branches = projectRequested.getBranches();
         String usernameLoggedIn = AccountController.loggedInUsername();
         model.addAttribute("userRequested", userRequested);
         model.addAttribute("usernameLoggedIn", usernameLoggedIn);
         model.addAttribute("project", projectRequested);
+        model.addAttribute("branches", branches);
         return "project";
     }
 
