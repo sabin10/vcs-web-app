@@ -2,6 +2,11 @@
 <html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'user')}">
 
 <body>
+
+    <h2>Edit Project Details</h2>
+
+    <br>
+
     <h2 th:text="'Add new collaborator'">Add</h2>
     <form class="form-horizontal" action="#" th:action="@{'/' + ${userOwner.username} + '/' + ${project.url} + '/addmember'}" th:object="${userForm}" method="post">
 
