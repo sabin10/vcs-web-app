@@ -32,14 +32,21 @@ public class VcsApplication implements CommandLineRunner {
         Project rep2 = new Project("vasile repo");
         rep2.setDescription("Developed with java");
 
-        rep1.getBranches().add(new Branch("branch-sabin"));
+        Branch branchSabin = new Branch("branch-sabin");
+        rep1.getBranches().add(branchSabin);
         rep1.addBranchWithName("branch-3");
+        rep1.getBranches().remove(sabin);
         projectRepository.save(rep1);
         projectRepository.save(rep2);
 
         sabin.addProject(rep1);
         sabin.addProject(rep2);
         vasile.addProject(rep2);
+
+        rep1.getBranches().remove(branchSabin);
+        //orphanRemovel = true => branch will be deleted automatically => no branchRepository needed
+        projectRepository.save(rep1);
+
 
         userService.save(sabin);
         userService.save(vasile);

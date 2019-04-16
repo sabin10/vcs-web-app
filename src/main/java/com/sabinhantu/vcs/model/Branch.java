@@ -24,7 +24,6 @@ public class Branch {
 
     //todo: constructor la care fiecare branch nou creat, copiaza branchul "master"
     public Branch() {
-
     }
 
     public Branch(@NotNull String name) {

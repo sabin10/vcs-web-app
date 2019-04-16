@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Set;
+
 @Controller
 public class BranchController {
     @Autowired
@@ -18,21 +20,78 @@ public class BranchController {
     @Autowired
     private ProjectRepository projectRepository;
 
+
+    //TODO: MERGE BRANCH TO MASTER
+
+
     @GetMapping("/{username}/{projectUrl}/master")
     public String toMasterBranch(@PathVariable final String username,
                                  @PathVariable final String projectUrl) {
         return "redirect:/" + username + "/" + projectUrl;
     }
 
+    //TODO:?????????????????
+//    @GetMapping("/{username}/{projectUrl}/{branchName}")
+//    public String toCustomBranch(@PathVariable final String username,
+//                                 @PathVariable final String projectUrl,
+//                                 @PathVariable final String branchName) {
+//        Project project = projectRepository.findByUrl(projectUrl);
+//        try {
+//            Set<Branch> branches = project.getBranches();
+//            for (Branch branch : branches) {
+//                if (branch.getName().equals(branchName))
+//                    return "redirect:/" + username + "/" + projectUrl;
+//            }
+//        } catch (NullPointerException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return "error";
+//    }
+
     @PostMapping("/{username}/{projectUrl}/addbranch")
     public String addBranch(@ModelAttribute("branchForm") Branch branchForm,
                             @PathVariable final String username,
                             @PathVariable final String projectUrl) {
         Project project = projectRepository.findByUrl(projectUrl);
+        if (!checkBranchAvailable(project, branchForm.getName())) {
+            return "redirect:/" + username + "/" + projectUrl + "/settings?branchexist";
+        }
         project.addBranchWithName(branchForm.getName());
         projectRepository.save(project);
         return "redirect:/" + username + "/" + projectUrl + "/settings";
+    }
 
+    @PostMapping("/{username}/{projectUrl}/deletebranch")
+    public String deleteBranch(@ModelAttribute("branchForm") Branch branchForm,
+                               @PathVariable final String username,
+                               @PathVariable final String projectUrl) {
+        Project project = projectRepository.findByUrl(projectUrl);
+        if (branchForm.getName().equals("master")) {
+            return "redirect:/" + username + "/" + projectUrl + "/settings?branchmasterdeleteerror";
+        }
+
+        Set<Branch> projectBranches = project.getBranches();
+
+        for (Branch branch : projectBranches) {
+            if (branch.getName().equals(branchForm.getName())) {
+                project.getBranches().remove(branch);
+                projectRepository.save(project);
+                return "redirect:/" + username + "/" + projectUrl + "/settings";
+            }
+        }
+
+        //will run only if the branch doesn't exist
+        return "redirect:/" + username + "/" + projectUrl + "/settings?branchnotexist";
+    }
+
+    private boolean checkBranchAvailable(Project project, String branchName) {
+        Set<Branch> branches = project.getBranches();
+        for (Branch branch : branches) {
+            if (branch.getName().equals(branchName))
+                return false;
+        }
+        return true;
     }
 
 }

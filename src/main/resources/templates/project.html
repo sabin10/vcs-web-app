@@ -3,7 +3,7 @@
 
 <body>
     <h1><span th:text="${project.title}">Project Title</span></h1>
-    <h3><span th:text="${project.description}">Project Description</span></h3>
+    <h5><span th:text="${project.description}">Project Description</span></h5>
     <table class="table table-striped">
         <tr>
             <th>0 commits</th>
@@ -11,6 +11,5 @@
             <th th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></th>
         </tr>
     </table>
-    <p th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></p>
 </body>
 </html>
