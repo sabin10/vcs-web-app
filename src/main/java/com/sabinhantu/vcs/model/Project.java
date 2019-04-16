@@ -63,6 +63,7 @@ public class Project {
 
     public void setTitle(String title) {
         this.title = title;
+        this.url = titleToUrl(title).toString();
     }
 
     public String getUrl() {

@@ -29,6 +29,24 @@ public class ProjectSettingsController {
     @Autowired
     private ProjectController projectController;
 
+    @PostMapping("/{usernameUrl}/{projectUrl}/edit")
+    public String editProjectCredentials(@PathVariable final String usernameUrl,
+                                         @PathVariable final String projectUrl,
+                                         @ModelAttribute("projectForm") Project projectForm) {
+        User user = userService.findByUsername(usernameUrl);
+        Set<Project> projects = user.getProjects();
+        for (Project project : projects) {
+            if (project.getUrl().equals(projectUrl)) {
+                project.setTitle(projectForm.getTitle());
+                projectRepository.save(project);
+                return "redirect:/{usernameUrl}/" + project.getUrl();
+            }
+        }
+
+        return "redirect:/" + usernameUrl + "/" + projectUrl + "/settings";
+    }
+
+
     //post add member ownership to repository
     @PostMapping("/{usernameUrl}/{projectUrl}/addmember")
     public String addMemberOwnershipToRepository(@PathVariable final String usernameUrl,
