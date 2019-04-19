@@ -4,18 +4,21 @@
 <body>
     <h1><span th:text="${project.title}">Project Title</span></h1>
     <h5><span th:text="${project.description}">Project Description</span></h5>
-    <!--CURRENT BRANCH SHOW-->
-    <h3><span th:text="${currentBranch}">Project Description</span></h3>
+
     <table class="table table-striped">
         <tr>
             <th><a th:text="${commitsNumber} + ' commits'" th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/commits/' + ${currentBranch} }">commits</a></th>
             <th>
-                <select>
-                    <!--<option value="">Select branch</option>-->
-                    <option th:each="branch : ${branches}"
-                            th:value="${branch.name}"
-                            th:text="${branch.name}"></option>
-                </select>
+                <details>
+                    <summary th:text="${currentBranch}"></summary>
+                    <ul>
+                        <li th:each="branch : ${branches}">
+                            <a th:text="${branch.name}" th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/tree/' + ${branch.name}}">
+
+                            </a>
+                        </li>
+                    </ul>
+                </details>
             </th>
             <th th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></th>
         </tr>

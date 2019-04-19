@@ -40,7 +40,6 @@ public class CommitController {
                 }
             }
         }
-
         return "error";
     }
 }
