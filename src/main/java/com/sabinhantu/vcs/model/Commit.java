@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Commit {
+public class Commit implements Comparable<Commit> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -89,5 +89,16 @@ public class Commit {
 
     public void setCreator(User creator) {
         this.creator = creator;
+    }
+
+    //sort descending
+    @Override
+    public int compareTo(Commit o) {
+        if (this.id < o.getId()) {
+            return 1;
+        } else if (this.id > o.getId()) {
+            return -1;
+        }
+        return 0;
     }
 }

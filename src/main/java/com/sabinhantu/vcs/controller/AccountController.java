@@ -22,10 +22,7 @@ public class AccountController {
     @GetMapping("/user")
     public String getAccount(Model model) {
         String usernameLoggedIn = loggedInUsername();
-
         model.addAttribute("currentuser", usernameLoggedIn);
-        // TODO: ar trebui cu try and catch? Intreaba Karla
-
         return "redirect:/" + usernameLoggedIn;
     }
 

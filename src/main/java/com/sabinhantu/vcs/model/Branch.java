@@ -5,8 +5,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Entity
 public class Branch {
@@ -24,11 +24,12 @@ public class Branch {
     @JoinTable(name = "branch_commit",
         joinColumns = {@JoinColumn(name = "branch_id")},
         inverseJoinColumns = {@JoinColumn(name = "commit_id")})
-    private Set<Commit> commits;
+    @javax.persistence.OrderBy("id")
+    private SortedSet<Commit> commits;
 
     //todo: constructor la care fiecare branch nou creat, copiaza branchul "master"
     public Branch() {
-        commits = new HashSet<>();
+        commits = new TreeSet<>();
     }
 
     public Branch(@NotNull String name) {
@@ -60,11 +61,20 @@ public class Branch {
         this.createdAt = createdAt;
     }
 
-    public Set<Commit> getCommits() {
+//    public Set<Commit> getCommits() {
+//        return commits;
+//    }
+//
+//    public void setCommits(Set<Commit> commits) {
+//        this.commits = commits;
+//    }
+
+
+    public SortedSet<Commit> getCommits() {
         return commits;
     }
 
-    public void setCommits(Set<Commit> commits) {
+    public void setCommits(SortedSet<Commit> commits) {
         this.commits = commits;
     }
 
