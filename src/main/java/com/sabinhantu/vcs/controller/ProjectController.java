@@ -36,11 +36,18 @@ public class ProjectController {
             return "error";
         }
         Set<Branch> branches = projectRequested.getBranches();
+        for (Branch branch : branches) {
+            if (branch.getName().equals("master")) {
+                int commitsNumber = branch.getCommits().size();
+                model.addAttribute("commitsNumber", commitsNumber);
+            }
+        }
         String usernameLoggedIn = AccountController.loggedInUsername();
         model.addAttribute("userRequested", userRequested);
         model.addAttribute("usernameLoggedIn", usernameLoggedIn);
         model.addAttribute("project", projectRequested);
         model.addAttribute("branches", branches);
+        model.addAttribute("currentBranch", "master");
         return "project";
     }
 

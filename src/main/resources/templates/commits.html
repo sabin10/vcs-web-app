@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'user')}">
+
+<body>
+    <table class="table table-striped">
+    <tr>
+    <th>Commit Name</th>
+    <th>Commit Description</th>
+    <th>Commit Creator</th>
+    </tr>
+    <tr th:each="commit : ${commits}">
+    <td th:text="${commit.name}">Onions</td>
+    <td th:text="${commit.description}">Onions</td>
+    <td th:text="${commit.creator.username}">Onions</td>
+    </tr>
+    </table>
+</body>
+</html>

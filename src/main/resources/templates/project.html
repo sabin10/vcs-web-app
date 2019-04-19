@@ -4,9 +4,11 @@
 <body>
     <h1><span th:text="${project.title}">Project Title</span></h1>
     <h5><span th:text="${project.description}">Project Description</span></h5>
+    <!--CURRENT BRANCH SHOW-->
+    <h3><span th:text="${currentBranch}">Project Description</span></h3>
     <table class="table table-striped">
         <tr>
-            <th th:text="${commitsNumber} + ' commits'">0 commits</th>
+            <th><a th:text="${commitsNumber} + ' commits'" th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/commits/' + ${currentBranch} }">commits</a></th>
             <th>
                 <select>
                     <!--<option value="">Select branch</option>-->
@@ -18,17 +20,5 @@
             <th th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></th>
         </tr>
     </table>
-    <!--<table class="table table-striped">-->
-        <!--<tr>-->
-            <!--<th>Commit Name</th>-->
-            <!--<th>Commit Description</th>-->
-            <!--<th>Commit Creator</th>-->
-        <!--</tr>-->
-        <!--<tr th:each="commit : ${commits}">-->
-            <!--<td th:text="${commit.name}">Onions</td>-->
-            <!--<td th:text="${commit.description}">Onions</td>-->
-            <!--<td th:text="${commit.creator.username}">Onions</td>-->
-        <!--</tr>-->
-    <!--</table>-->
 </body>
 </html>

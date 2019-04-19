@@ -51,6 +51,7 @@ public class BranchController {
                     model.addAttribute("branches", branches);
                     int commitsNumber = branch.getCommits().size();
                     model.addAttribute("commitsNumber", commitsNumber);
+                    model.addAttribute("currentBranch", branch.getName());
 //                    Set<Commit> commits = branch.getCommits();
 //                    model.addAttribute("commits", commits);
                     return "project";

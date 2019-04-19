@@ -52,12 +52,20 @@ public class VcsApplication implements CommandLineRunner {
         vasile.addProject(rep2);
 
 
-        Commit commit = new Commit("commit nou", "descriere commit");
+        Commit commit1 = new Commit("commit nou", "descriere commit");
+        Commit commit2 = new Commit("commitul 2", "ceva desc");
         userService.save(sabin);
-        commit.setCreator(sabin);
-        commitRepository.save(commit);
-        branchSabin.addCommit(commit);
+        commit1.setCreator(sabin);
+        commit2.setCreator(sabin);
+        commitRepository.save(commit1);
+        commitRepository.save(commit2);
+        branchSabin.addCommit(commit1);
+        branchSabin.addCommit(commit2);
         branchRepository.save(branchSabin);
+
+        Branch masterRep1 = rep1.getBranchByName("master");
+        masterRep1.addCommit(commit1);
+        branchRepository.save(masterRep1);
 
 
         //userService.save(sabin);
