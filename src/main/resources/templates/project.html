@@ -6,7 +6,7 @@
     <h5><span th:text="${project.description}">Project Description</span></h5>
     <table class="table table-striped">
         <tr>
-            <th>0 commits</th>
+            <th th:text="${commitsNumber} + ' commits'">0 commits</th>
             <th>
                 <select>
                     <!--<option value="">Select branch</option>-->
@@ -18,18 +18,17 @@
             <th th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></th>
         </tr>
     </table>
-
-    <table class="table table-striped">
-        <tr>
-            <th>Commit Name</th>
-            <th>Commit Description</th>
-            <th>Commit Creator</th>
-        </tr>
-        <tr th:each="commit : ${commits}">
-            <td th:text="${commit.name}">Onions</td>
-            <td th:text="${commit.description}">Onions</td>
-            <td th:text="${commit.creator.username}">Onions</td>
-        </tr>
-    </table>
+    <!--<table class="table table-striped">-->
+        <!--<tr>-->
+            <!--<th>Commit Name</th>-->
+            <!--<th>Commit Description</th>-->
+            <!--<th>Commit Creator</th>-->
+        <!--</tr>-->
+        <!--<tr th:each="commit : ${commits}">-->
+            <!--<td th:text="${commit.name}">Onions</td>-->
+            <!--<td th:text="${commit.description}">Onions</td>-->
+            <!--<td th:text="${commit.creator.username}">Onions</td>-->
+        <!--</tr>-->
+    <!--</table>-->
 </body>
 </html>

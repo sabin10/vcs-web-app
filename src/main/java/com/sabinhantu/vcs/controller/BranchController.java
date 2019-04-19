@@ -1,7 +1,6 @@
 package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.model.Branch;
-import com.sabinhantu.vcs.model.Commit;
 import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
 import com.sabinhantu.vcs.repository.ProjectRepository;
@@ -50,8 +49,10 @@ public class BranchController {
                     model.addAttribute("usernameLoggedIn", usernameLoggedIn);
                     model.addAttribute("project", project);
                     model.addAttribute("branches", branches);
-                    Set<Commit> commits = branch.getCommits();
-                    model.addAttribute("commits", commits);
+                    int commitsNumber = branch.getCommits().size();
+                    model.addAttribute("commitsNumber", commitsNumber);
+//                    Set<Commit> commits = branch.getCommits();
+//                    model.addAttribute("commits", commits);
                     return "project";
                 }
             }
