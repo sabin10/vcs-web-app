@@ -67,7 +67,6 @@ public class ProjectSettingsController {
         if (newMemberUser == null || projectController.userOwnsRepository(newMemberUser, project)) {
             return "redirect:/" + usernameUrl + "/" + projectUrl + "/settings?error";
         }
-
         newMemberUser.addProject(project);
         userRepository.save(newMemberUser);
 

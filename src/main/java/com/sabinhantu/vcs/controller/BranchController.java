@@ -32,7 +32,6 @@ public class BranchController {
         return "redirect:/" + username + "/" + projectUrl;
     }
 
-    //TODO:?????????????????
     @GetMapping("/{username}/{projectUrl}/tree/{branchName}")
     public String toCustomBranch(@PathVariable final String username,
                                  @PathVariable final String projectUrl,
@@ -52,15 +51,12 @@ public class BranchController {
                     int commitsNumber = branch.getCommits().size();
                     model.addAttribute("commitsNumber", commitsNumber);
                     model.addAttribute("currentBranch", branch.getName());
-//                    Set<Commit> commits = branch.getCommits();
-//                    model.addAttribute("commits", commits);
                     return "project";
                 }
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-
         return "error";
     }
 
@@ -88,9 +84,7 @@ public class BranchController {
         if (branchForm.getName().equals("master")) {
             return "redirect:/" + username + "/" + projectUrl + "/settings?branchmasterdeleteerror";
         }
-
         Set<Branch> projectBranches = project.getBranches();
-
         for (Branch branch : projectBranches) {
             if (branch.getName().equals(branchForm.getName())) {
                 project.getBranches().remove(branch);
@@ -98,7 +92,6 @@ public class BranchController {
                 return "redirect:/" + username + "/" + projectUrl + "/settings";
             }
         }
-        //run only if the branch doesn't exist
         return "redirect:/" + username + "/" + projectUrl + "/settings?branchnotexist";
     }
 

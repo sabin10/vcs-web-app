@@ -7,7 +7,6 @@ import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
 import com.sabinhantu.vcs.repository.BranchRepository;
 import com.sabinhantu.vcs.repository.CommitRepository;
-import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,9 +22,6 @@ import java.util.Set;
 public class CommitController {
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private ProjectRepository projectRepository;
 
     @Autowired
     private CommitRepository commitRepository;
@@ -49,6 +45,9 @@ public class CommitController {
                                    @PathVariable final String projectUrl,
                                    @PathVariable final String branchName,
                                    Model model) {
+        if (!doesBranchExist(username, projectUrl, branchName)) {
+            return "error";
+        }
         model.addAttribute("username", username);
         model.addAttribute("projectUrl", projectUrl);
         model.addAttribute("branchName", branchName);
@@ -86,5 +85,20 @@ public class CommitController {
         return null;
     }
 
+    protected boolean doesBranchExist(String username, String projectUrl, String branchName) {
+        User user = userService.findByUsername(username);
+        Set<Project> projects = user.getProjects();
+        for (Project project : projects) {
+            if (project.getUrl().equals(projectUrl)) {
+                Set<Branch> branches = project.getBranches();
+                for (Branch branch : branches) {
+                    if (branch.getName().equals(branchName)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
 }
