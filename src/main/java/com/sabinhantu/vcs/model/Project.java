@@ -110,6 +110,15 @@ public class Project {
         branches.add(new Branch(branchName));
     }
 
+    public Branch getBranchByName(String name) {
+        for (Branch branch : this.branches) {
+            if (branch.getName().equals(name)) {
+                return branch;
+            }
+        }
+        return null;
+    }
+
     private StringBuilder titleToUrl(String title) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < title.length(); i++) {

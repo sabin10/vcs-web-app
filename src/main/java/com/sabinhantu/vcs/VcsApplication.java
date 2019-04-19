@@ -1,8 +1,11 @@
 package com.sabinhantu.vcs;
 
 import com.sabinhantu.vcs.model.Branch;
+import com.sabinhantu.vcs.model.Commit;
 import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
+import com.sabinhantu.vcs.repository.BranchRepository;
+import com.sabinhantu.vcs.repository.CommitRepository;
 import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,12 @@ public class VcsApplication implements CommandLineRunner {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private CommitRepository commitRepository;
+
+    @Autowired
+    private BranchRepository branchRepository;
 
 
     public static void main(String[] args) {
@@ -35,7 +44,6 @@ public class VcsApplication implements CommandLineRunner {
         Branch branchSabin = new Branch("branch-sabin");
         rep1.getBranches().add(branchSabin);
         rep1.addBranchWithName("branch-3");
-        rep1.getBranches().remove(sabin);
         projectRepository.save(rep1);
         projectRepository.save(rep2);
 
@@ -43,12 +51,16 @@ public class VcsApplication implements CommandLineRunner {
         sabin.addProject(rep2);
         vasile.addProject(rep2);
 
-        rep1.getBranches().remove(branchSabin);
-        //orphanRemovel = true => branch will be deleted automatically => no branchRepository needed
-        projectRepository.save(rep1);
 
-
+        Commit commit = new Commit("commit nou", "descriere commit");
         userService.save(sabin);
+        commit.setCreator(sabin);
+        commitRepository.save(commit);
+        branchSabin.addCommit(commit);
+        branchRepository.save(branchSabin);
+
+
+        //userService.save(sabin);
         userService.save(vasile);
         userService.save(new User("cosmin", "cosmin@gmail.com","cosmin"));
         userService.save(new User("voinea", "voinea@gmail.com","voinea"));

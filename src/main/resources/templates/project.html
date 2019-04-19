@@ -18,5 +18,18 @@
             <th th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></th>
         </tr>
     </table>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Commit Name</th>
+            <th>Commit Description</th>
+            <th>Commit Creator</th>
+        </tr>
+        <tr th:each="commit : ${commits}">
+            <td th:text="${commit.name}">Onions</td>
+            <td th:text="${commit.description}">Onions</td>
+            <td th:text="${commit.creator.username}">Onions</td>
+        </tr>
+    </table>
 </body>
 </html>

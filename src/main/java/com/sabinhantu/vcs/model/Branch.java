@@ -2,12 +2,11 @@ package com.sabinhantu.vcs.model;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Branch {
@@ -21,11 +20,19 @@ public class Branch {
     @CreationTimestamp
     private Date createdAt;
 
+    @ManyToMany
+    @JoinTable(name = "branch_commit",
+        joinColumns = {@JoinColumn(name = "branch_id")},
+        inverseJoinColumns = {@JoinColumn(name = "commit_id")})
+    private Set<Commit> commits;
+
     //todo: constructor la care fiecare branch nou creat, copiaza branchul "master"
     public Branch() {
+        commits = new HashSet<>();
     }
 
     public Branch(@NotNull String name) {
+        this();
         this.name = name;
     }
 
@@ -52,4 +59,23 @@ public class Branch {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
+
+    public Set<Commit> getCommits() {
+        return commits;
+    }
+
+    public void setCommits(Set<Commit> commits) {
+        this.commits = commits;
+    }
+
+    public void addCommit(Commit commit) {
+        this.commits.add(commit);
+        commit.getBranches().add(this);
+    }
+
+    public void removeCommit(Commit commit) {
+        this.commits.remove(commit);
+        commit.getBranches().remove(this);
+    }
+
 }
