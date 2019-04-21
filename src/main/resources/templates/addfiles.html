@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'addproject')}">
+<head>
+    <link rel="stylesheet" th:href="@{static/css/uploadfiles.css}" />
+</head>
+    <body>
+        <div class="upload-container">
+            <div class="upload-header">
+                <h2>Spring Boot File Upload / Download Rest API Example</h2>
+            </div>
+            <div class="upload-content">
+                <div class="single-upload">
+                    <h3>Upload Single File</h3>
+
+                    <form id="singleUploadForm" name="singleUploadForm" th:action="@{'/addfile'}" method="post" enctype="multipart/form-data">
+                        <input id="singleFileUploadInput" type="file" name="file" class="file-input" required />
+                        <button type="submit" class="primary submit-btn">Submit</button>
+                    </form>
+                    <div class="upload-response">
+                        <div id="singleFileUploadError"></div>
+                        <div id="singleFileUploadSuccess"></div>
+                    </div>
+                </div>
+                <!--<div class="multiple-upload">-->
+                    <!--<h3>Upload Multiple Files</h3>-->
+                    <!--<form id="multipleUploadForm" name="multipleUploadForm">-->
+                        <!--<input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple required />-->
+                        <!--<button type="submit" class="primary submit-btn">Submit</button>-->
+                    <!--</form>-->
+                    <!--<div class="upload-response">-->
+                        <!--<div id="multipleFileUploadError"></div>-->
+                        <!--<div id="multipleFileUploadSuccess"></div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <tr>
+                <th>FileName</th>
+                <th>FileType</th>
+            </tr>
+            <tr th:each="file : ${files}">
+                <td th:text="${file.fileName}">Onions</td>
+                <td th:text="${file.fileType}">Onions</td>
+            </tr>
+        </table>
+
+    </body>
+</html>

@@ -61,15 +61,6 @@ public class Branch {
         this.createdAt = createdAt;
     }
 
-//    public Set<Commit> getCommits() {
-//        return commits;
-//    }
-//
-//    public void setCommits(Set<Commit> commits) {
-//        this.commits = commits;
-//    }
-
-
     public SortedSet<Commit> getCommits() {
         return commits;
     }
