@@ -24,6 +24,10 @@ public class FileController {
     @GetMapping("/addfiles")
     public String addFilesView(Model model) {
         model.addAttribute("files", dbFileRepository.findAll());
+        if (dbFileRepository.findAll().isEmpty() == false) {
+            String dataString = new String(dbFileRepository.getOne(1L).getData());
+            model.addAttribute("dataString", dataString);
+        }
         return "addfiles";
     }
 
