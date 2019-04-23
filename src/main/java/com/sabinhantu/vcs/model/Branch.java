@@ -27,7 +27,6 @@ public class Branch {
     @javax.persistence.OrderBy("id")
     private SortedSet<Commit> commits;
 
-    //todo: constructor la care fiecare branch nou creat, copiaza branchul "master"
     public Branch() {
         commits = new TreeSet<>();
     }
@@ -78,5 +77,4 @@ public class Branch {
         this.commits.remove(commit);
         commit.getBranches().remove(this);
     }
-
 }

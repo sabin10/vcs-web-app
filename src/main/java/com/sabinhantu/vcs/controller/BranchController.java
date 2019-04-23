@@ -1,9 +1,11 @@
 package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.model.Branch;
+import com.sabinhantu.vcs.model.Commit;
 import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
 import com.sabinhantu.vcs.repository.ProjectRepository;
+import com.sabinhantu.vcs.repository.UserRepository;
 import com.sabinhantu.vcs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,12 +21,12 @@ import java.util.Set;
 public class BranchController {
     @Autowired
     private UserService userService;
+
     @Autowired
     private ProjectRepository projectRepository;
 
-
-    //TODO: MERGE CUSTOM BRANCH TO MASTER
-
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/{username}/{projectUrl}/tree/master")
     public String toMasterBranch(@PathVariable final String username,
@@ -71,7 +73,12 @@ public class BranchController {
         if (!checkBranchAvailable(project, branchForm.getName())) {
             return "redirect:/" + username + "/" + projectUrl + "/settings?branchexist";
         }
-        project.addBranchWithName(branchForm.getName());
+
+        // When new branch is created, it will continue master branch
+        Branch newBranch = new Branch(branchForm.getName());
+        Set<Commit> masterCommits = getMasterBranch(username, projectUrl).getCommits();
+        newBranch.getCommits().addAll(masterCommits);
+        project.getBranches().add(newBranch);
         projectRepository.save(project);
         return "redirect:/" + username + "/" + projectUrl + "/settings";
     }
@@ -93,6 +100,21 @@ public class BranchController {
             }
         }
         return "redirect:/" + username + "/" + projectUrl + "/settings?branchnotexist";
+    }
+
+    private Branch getMasterBranch(String username, String projectUrl) {
+        User user = userRepository.findByUsername(username);
+        Set<Project> projects = user.getProjects();
+        for (Project project : projects) {
+            if (project.getUrl().equals(projectUrl)) {
+                Set<Branch> branches = project.getBranches();
+                for (Branch branch : branches) {
+                    if (branch.getName().equals("master"))
+                        return branch;
+                }
+            }
+        }
+        return null;
     }
 
     private boolean checkBranchAvailable(Project project, String branchName) {
