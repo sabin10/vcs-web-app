@@ -1,7 +1,11 @@
 package com.sabinhantu.vcs.form;
 
+import javax.validation.constraints.NotEmpty;
+
 public class CommitForm {
+    @NotEmpty
     private String name;
+
     private String description;
 
     public CommitForm() {

@@ -13,6 +13,7 @@ public class DBFile implements Comparable<DBFile>{
     private String fileType;
 
     @Lob
+    @Column(length = 10000, name = "data")
     private byte[] data;
 
     @ManyToOne
