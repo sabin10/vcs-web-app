@@ -1,6 +1,7 @@
 package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.form.CommitForm;
+import com.sabinhantu.vcs.form.FileForm;
 import com.sabinhantu.vcs.model.*;
 import com.sabinhantu.vcs.repository.BranchRepository;
 import com.sabinhantu.vcs.repository.CommitRepository;
@@ -43,6 +44,9 @@ public class CommitController {
         Branch currentBranch = getCurrentBranch(username, projectUrl, branchName);
         Set<Commit> commits = currentBranch.getCommits();
         model.addAttribute("commits", commits);
+        model.addAttribute("username", username);
+        model.addAttribute("projectUrl", projectUrl);
+        model.addAttribute("branchName", branchName);
         return "commits";
     }
 
@@ -92,6 +96,30 @@ public class CommitController {
         return "redirect:/" + username + "/" + projectUrl + "/tree/" + branchName;
     }
 
+    @GetMapping("/{username}/{projectUrl}/{branchName}/commit/{commitIdString}")
+    public String getCommitDetails(@PathVariable final String username,
+                                   @PathVariable final String projectUrl,
+                                   @PathVariable final String branchName,
+                                   @PathVariable final String commitIdString,
+                                   Model model) {
+        Long commitId = Long.parseLong(commitIdString);
+        Commit commit = getCurrentCommit(getCurrentBranch(username, projectUrl, branchName), commitId);
+        if (commit == null) {
+            return "error";
+        }
+        model.addAttribute("commit", commit);
+
+        List<FileForm> filesForm = new ArrayList<>();
+        Set<DBFile> dbFiles = commit.getFiles();
+        for (DBFile dbFile : dbFiles) {
+            filesForm.add(new FileForm(dbFile.getFileName(), new String(dbFile.getData())));
+        }
+        model.addAttribute("filesForm", filesForm);
+
+        return "commitdetails";
+    }
+
+
     protected Branch getCurrentBranch(String username, String projectUrl, String branchName) {
         User user = userService.findByUsername(username);
         Set<Project> projects = user.getProjects();
@@ -103,6 +131,16 @@ public class CommitController {
                         return branch;
                     }
                 }
+            }
+        }
+        return null;
+    }
+
+    protected Commit getCurrentCommit(Branch branch, Long commitId) {
+        Set<Commit> commits = branch.getCommits();
+        for (Commit commit : commits) {
+            if (commit.getId().equals(commitId)) {
+                return commit;
             }
         }
         return null;
