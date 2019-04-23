@@ -3,7 +3,7 @@ package com.sabinhantu.vcs.model;
 import javax.persistence.*;
 
 @Entity
-public class DBFile {
+public class DBFile implements Comparable<DBFile>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,6 +14,10 @@ public class DBFile {
 
     @Lob
     private byte[] data;
+
+    @ManyToOne
+    @JoinColumn(name = "commit_id")
+    private Commit commit;
 
     public DBFile() {
     }
@@ -54,5 +58,24 @@ public class DBFile {
 
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    public Commit getCommit() {
+        return commit;
+    }
+
+    public void setCommit(Commit commit) {
+        this.commit = commit;
+    }
+
+    //sort ascending
+    @Override
+    public int compareTo(DBFile o) {
+        if (this.id < o.getId()) {
+            return -1;
+        } else if (this.id > o.getId()) {
+            return 1;
+        }
+        return 0;
     }
 }

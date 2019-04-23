@@ -34,7 +34,6 @@ public class FileController {
             for (DBFile file : files) {
                 dataStrings.add(new String(file.getData()));
             }
-            //String dataString = new String(dbFileRepository.getOne(1L).getData());
             model.addAttribute("dataStrings", dataStrings);
         }
         return "addfiles";

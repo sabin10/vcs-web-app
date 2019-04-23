@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Entity
 public class Commit implements Comparable<Commit> {
@@ -29,8 +31,13 @@ public class Commit implements Comparable<Commit> {
     @JoinColumn(name = "user_id")
     private User creator;
 
+    @OneToMany(mappedBy = "commit")
+    @javax.persistence.OrderBy("id")
+    private SortedSet<DBFile> files;
+
     public Commit() {
         branches = new HashSet<>();
+        files = new TreeSet<>();
     }
 
     public Commit(@NotNull String name) {
@@ -89,6 +96,19 @@ public class Commit implements Comparable<Commit> {
 
     public void setCreator(User creator) {
         this.creator = creator;
+    }
+
+    public SortedSet<DBFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(SortedSet<DBFile> files) {
+        this.files = files;
+    }
+
+    public void addFile(DBFile file) {
+        this.files.add(file);
+        file.setCommit(this);
     }
 
     //sort descending
