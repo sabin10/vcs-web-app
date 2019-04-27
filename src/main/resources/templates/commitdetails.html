@@ -5,15 +5,17 @@
         <div>
             <h1 th:text="${commit.name}">commit name</h1>
             <h5 th:text="${commit.description}">commit description</h5>
+            <h5 th:text="${commit.createdAt}">commit date</h5>
         </div>
 
         <br>
         <div th:each="fileForm : ${filesForm}">
             <h4 th:text="${fileForm.fileName}">file name</h4>
             <pre style="
-                     border: 1px solid #999;
-                     display: block;
-                     padding: 20px;">
+                    /*background-color: #eee;*/
+                    border: 1px solid #999;
+                    display: block;
+                    padding: 20px;">
                 <code th:text="${fileForm.fileData}">
                     CodeText
                 </code>
