@@ -18,7 +18,7 @@ public class DBFile implements Comparable<DBFile>{
 
     @ManyToOne
     @JoinColumn(name = "commit_id")
-    private Commit commit;
+    private Commit lastCommit;
 
     public DBFile() {
     }
@@ -61,12 +61,12 @@ public class DBFile implements Comparable<DBFile>{
         this.data = data;
     }
 
-    public Commit getCommit() {
-        return commit;
+    public Commit getLastCommit() {
+        return lastCommit;
     }
 
-    public void setCommit(Commit commit) {
-        this.commit = commit;
+    public void setLastCommit(Commit commit) {
+        this.lastCommit = commit;
     }
 
     //sort ascending

@@ -27,8 +27,14 @@ public class Branch {
     @javax.persistence.OrderBy("id")
     private SortedSet<Commit> commits;
 
+    @OneToMany
+    @JoinColumn(name = "branch_id")
+    @javax.persistence.OrderBy("id")
+    private SortedSet<DBFile> files;
+
     public Branch() {
         commits = new TreeSet<>();
+        files = new TreeSet<>();
     }
 
     public Branch(@NotNull String name) {
@@ -66,6 +72,18 @@ public class Branch {
 
     public void setCommits(SortedSet<Commit> commits) {
         this.commits = commits;
+    }
+
+    public SortedSet<DBFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(SortedSet<DBFile> files) {
+        this.files = files;
+    }
+
+    public void addFile(DBFile file) {
+        this.files.add(file);
     }
 
     public void addCommit(Commit commit) {
