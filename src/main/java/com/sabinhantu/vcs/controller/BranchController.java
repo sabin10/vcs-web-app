@@ -1,9 +1,6 @@
 package com.sabinhantu.vcs.controller;
 
-import com.sabinhantu.vcs.model.Branch;
-import com.sabinhantu.vcs.model.Commit;
-import com.sabinhantu.vcs.model.Project;
-import com.sabinhantu.vcs.model.User;
+import com.sabinhantu.vcs.model.*;
 import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.repository.UserRepository;
 import com.sabinhantu.vcs.service.UserService;
@@ -53,6 +50,11 @@ public class BranchController {
                     int commitsNumber = branch.getCommits().size();
                     model.addAttribute("commitsNumber", commitsNumber);
                     model.addAttribute("currentBranch", branch.getName());
+
+                    // Retrieve files for current branch
+                    Set<DBFile> files = getCurrentBranch(username, projectUrl, branchName).getFiles();
+                    model.addAttribute("files", files);
+
                     return "project";
                 }
             }
@@ -102,6 +104,8 @@ public class BranchController {
         return "redirect:/" + username + "/" + projectUrl + "/settings?branchnotexist";
     }
 
+    // TODO: singleton class for these methods?
+
     protected Branch getMasterBranch(String username, String projectUrl) {
         User user = userRepository.findByUsername(username);
         Set<Project> projects = user.getProjects();
@@ -111,6 +115,22 @@ public class BranchController {
                 for (Branch branch : branches) {
                     if (branch.getName().equals("master"))
                         return branch;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected Branch getCurrentBranch(String username, String projectUrl, String branchName) {
+        User user = userService.findByUsername(username);
+        Set<Project> projects = user.getProjects();
+        for (Project project : projects) {
+            if (project.getUrl().equals(projectUrl)) {
+                Set<Branch> branches = project.getBranches();
+                for (Branch branch : branches) {
+                    if (branch.getName().equals(branchName)) {
+                        return branch;
+                    }
                 }
             }
         }
