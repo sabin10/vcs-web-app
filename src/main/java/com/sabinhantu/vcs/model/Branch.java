@@ -24,12 +24,12 @@ public class Branch {
     @JoinTable(name = "branch_commit",
         joinColumns = {@JoinColumn(name = "branch_id")},
         inverseJoinColumns = {@JoinColumn(name = "commit_id")})
-    @javax.persistence.OrderBy("id")
+    @OrderBy("id")
     private SortedSet<Commit> commits;
 
     @OneToMany
     @JoinColumn(name = "branch_id")
-    @javax.persistence.OrderBy("id")
+    @OrderBy("id")
     private SortedSet<DBFile> files;
 
     public Branch() {

@@ -18,6 +18,10 @@ public class DeltaSimulate{
     @JoinColumn(name = "dbfile_id")
     private DBFile file;
 
+    @ManyToOne
+    @JoinColumn(name = "commit_id")
+    private Commit commit;
+
     private String deltaType;
 
     private int positionOriginal;
@@ -59,6 +63,14 @@ public class DeltaSimulate{
 
     public void setFile(DBFile file) {
         this.file = file;
+    }
+
+    public Commit getCommit() {
+        return commit;
+    }
+
+    public void setCommit(Commit commit) {
+        this.commit = commit;
     }
 
     public String getDeltaType() {

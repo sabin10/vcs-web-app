@@ -29,8 +29,12 @@ public class Commit implements Comparable<Commit> {
     @JoinColumn(name = "user_id")
     private User creator;
 
+    @OneToMany(mappedBy = "commit")
+    private Set<DeltaSimulate> deltaSimulateSet;
+
     public Commit() {
         branches = new HashSet<>();
+        deltaSimulateSet = new HashSet<>();
     }
 
     public Commit(@NotNull String name) {
@@ -89,6 +93,19 @@ public class Commit implements Comparable<Commit> {
 
     public void setCreator(User creator) {
         this.creator = creator;
+    }
+
+    public Set<DeltaSimulate> getDeltaSimulateSet() {
+        return deltaSimulateSet;
+    }
+
+    public void setDeltaSimulateSet(Set<DeltaSimulate> deltaSimulateSet) {
+        this.deltaSimulateSet = deltaSimulateSet;
+    }
+
+    public void addDeltaSimulate(DeltaSimulate deltaSimulate) {
+        this.deltaSimulateSet.add(deltaSimulate);
+        deltaSimulate.setCommit(this);
     }
 
     //sort descending
