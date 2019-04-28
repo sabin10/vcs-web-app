@@ -1,6 +1,7 @@
 package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.model.Branch;
+import com.sabinhantu.vcs.model.DBFile;
 import com.sabinhantu.vcs.model.Project;
 import com.sabinhantu.vcs.model.User;
 import com.sabinhantu.vcs.repository.ProjectRepository;
@@ -26,6 +27,7 @@ public class ProjectController {
     @Autowired
     private UserRepository userRepository;
 
+
     @GetMapping("/{username}/{projectUrl}")
     public String userRepository(@PathVariable final String username,
                                  @PathVariable final String projectUrl,
@@ -48,6 +50,11 @@ public class ProjectController {
         model.addAttribute("project", projectRequested);
         model.addAttribute("branches", branches);
         model.addAttribute("currentBranch", "master");
+
+        // Retrieve files from db
+        Set<DBFile> files = getMasterBranch(username, projectUrl).getFiles();
+        model.addAttribute("files", files);
+
         return "project";
     }
 
@@ -83,5 +90,20 @@ public class ProjectController {
         if (user.getProjects().contains(project))
             return true;
         return false;
+    }
+
+    protected Branch getMasterBranch(String username, String projectUrl) {
+        User user = userRepository.findByUsername(username);
+        Set<Project> projects = user.getProjects();
+        for (Project project : projects) {
+            if (project.getUrl().equals(projectUrl)) {
+                Set<Branch> branches = project.getBranches();
+                for (Branch branch : branches) {
+                    if (branch.getName().equals("master"))
+                        return branch;
+                }
+            }
+        }
+        return null;
     }
 }

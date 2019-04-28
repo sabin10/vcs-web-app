@@ -1,10 +1,7 @@
 package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.form.CommitForm;
-import com.sabinhantu.vcs.model.Branch;
-import com.sabinhantu.vcs.model.Commit;
-import com.sabinhantu.vcs.model.Project;
-import com.sabinhantu.vcs.model.User;
+import com.sabinhantu.vcs.model.*;
 import com.sabinhantu.vcs.repository.BranchRepository;
 import com.sabinhantu.vcs.repository.CommitRepository;
 import com.sabinhantu.vcs.repository.DBFileRepository;
@@ -18,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -76,29 +74,30 @@ public class CommitController {
                                 @PathVariable final String branchName,
                                 @ModelAttribute("commitForm") @Valid CommitForm commitForm,
                                 @RequestParam("files") MultipartFile[] files) {
-//        Commit newCommit = new Commit(commitForm.getName(), commitForm.getDescription());
-//        User userLogged = userService.findByUsername(AccountController.loggedInUsername());
-//        newCommit.setCreator(userLogged);
-//        commitRepository.save(newCommit);
-//
-//        // List keep id for each file uploaded
-//        List<Long> filesIds = new ArrayList<>();
-//        for (MultipartFile file : files) {
-//            dbFileStorageService.storeFile(file);
-//            long countFilesRepository = dbFileRepository.count();
-//            filesIds.add(countFilesRepository);
-//        }
-//
-//        // Adding files to the new commit
-//        for (Long fileId : filesIds) {
-//            DBFile dbFile = dbFileRepository.getOne(fileId);
+        Commit newCommit = new Commit(commitForm.getName(), commitForm.getDescription());
+        User userLogged = userService.findByUsername(AccountController.loggedInUsername());
+        newCommit.setCreator(userLogged);
+        commitRepository.save(newCommit);
+
+        // List keep id for each file uploaded
+        List<Long> filesIds = new ArrayList<>();
+        for (MultipartFile file : files) {
+            dbFileStorageService.storeFile(file);
+            long countFilesRepository = dbFileRepository.count();
+            filesIds.add(countFilesRepository);
+        }
+
+        // Adding files to the current branch
+        Branch currentBranch = getCurrentBranch(username, projectUrl, branchName);
+        for (Long fileId : filesIds) {
+            DBFile dbFile = dbFileRepository.getOne(fileId);
 //            newCommit.addFile(dbFile);
+            currentBranch.addFile(dbFile);
 //            commitRepository.save(newCommit);
-//        }
-//
-//        Branch currentBranch = getCurrentBranch(username, projectUrl, branchName);
-//        currentBranch.addCommit(newCommit);
-//        branchRepository.save(currentBranch);
+        }
+
+        currentBranch.addCommit(newCommit);
+        branchRepository.save(currentBranch);
 
         return "redirect:/" + username + "/" + projectUrl + "/tree/" + branchName;
     }

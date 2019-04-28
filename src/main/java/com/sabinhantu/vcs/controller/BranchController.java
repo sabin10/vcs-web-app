@@ -102,7 +102,7 @@ public class BranchController {
         return "redirect:/" + username + "/" + projectUrl + "/settings?branchnotexist";
     }
 
-    private Branch getMasterBranch(String username, String projectUrl) {
+    protected Branch getMasterBranch(String username, String projectUrl) {
         User user = userRepository.findByUsername(username);
         Set<Project> projects = user.getProjects();
         for (Project project : projects) {
@@ -117,7 +117,7 @@ public class BranchController {
         return null;
     }
 
-    private boolean checkBranchAvailable(Project project, String branchName) {
+    protected boolean checkBranchAvailable(Project project, String branchName) {
         Set<Branch> branches = project.getBranches();
         for (Branch branch : branches) {
             if (branch.getName().equals(branchName))
