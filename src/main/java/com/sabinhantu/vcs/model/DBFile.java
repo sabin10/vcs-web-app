@@ -17,6 +17,10 @@ public class DBFile implements Comparable<DBFile>{
     private byte[] data;
 
     @ManyToOne
+    @JoinColumn(name = "branch_id")
+    private Branch branch;
+
+    @ManyToOne
     @JoinColumn(name = "commit_id")
     private Commit lastCommit;
 
@@ -59,6 +63,14 @@ public class DBFile implements Comparable<DBFile>{
 
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
     }
 
     public Commit getLastCommit() {
