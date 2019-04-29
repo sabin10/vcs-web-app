@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Entity
 public class Commit implements Comparable<Commit> {
@@ -30,11 +32,12 @@ public class Commit implements Comparable<Commit> {
     private User creator;
 
     @OneToMany(mappedBy = "commit")
-    private Set<DeltaSimulate> deltaSimulateSet;
+    @OrderBy("id")
+    private SortedSet<DeltaSimulate> deltaSimulateSet;
 
     public Commit() {
         branches = new HashSet<>();
-        deltaSimulateSet = new HashSet<>();
+        deltaSimulateSet = new TreeSet<>();
     }
 
     public Commit(@NotNull String name) {
@@ -95,11 +98,11 @@ public class Commit implements Comparable<Commit> {
         this.creator = creator;
     }
 
-    public Set<DeltaSimulate> getDeltaSimulateSet() {
+    public SortedSet<DeltaSimulate> getDeltaSimulateSet() {
         return deltaSimulateSet;
     }
 
-    public void setDeltaSimulateSet(Set<DeltaSimulate> deltaSimulateSet) {
+    public void setDeltaSimulateSet(SortedSet<DeltaSimulate> deltaSimulateSet) {
         this.deltaSimulateSet = deltaSimulateSet;
     }
 

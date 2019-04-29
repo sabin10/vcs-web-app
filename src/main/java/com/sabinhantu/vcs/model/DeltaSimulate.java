@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
-public class DeltaSimulate{
+public class DeltaSimulate implements Comparable<DeltaSimulate>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -111,5 +111,15 @@ public class DeltaSimulate{
 
     public void setLinesRevised(String linesRevised) {
         this.linesRevised = linesRevised;
+    }
+
+    @Override
+    public int compareTo(DeltaSimulate o) {
+        if (this.id > o.getId()) {
+            return 1;
+        } else if (this.id < o.getId()) {
+            return -1;
+        }
+        return 0;
     }
 }
