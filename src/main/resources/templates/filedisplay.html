@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'')}">
+
+<body>
+    <h4 th:text="${fileForm.fileName}">file name</h4>
+    <pre style="
+    /*background-color: #eee;*/
+    border: 1px solid #999;
+    display: block;
+    padding: 20px;">
+        <code th:text="${fileForm.fileData}">
+            CodeText
+        </code>
+    </pre>
+</body>
+</html>

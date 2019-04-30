@@ -31,7 +31,7 @@
             <th>Last Commit</th>
         </tr>
         <tr th:each="file : ${files}">
-            <td th:text="${file.fileName}">Onions</td>
+            <td><a th:text="${file.fileName}" th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/' + ${currentBranch} + '/file/' + ${file.fileName}}"></a></td>
             <td th:text="${file.lastCommit.name}">Onions</td>
         </tr>
     </table>
