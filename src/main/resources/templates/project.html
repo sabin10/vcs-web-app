@@ -28,9 +28,11 @@
     <table class="table table-striped">
         <tr>
             <th>File</th>
+            <th>Last Commit</th>
         </tr>
         <tr th:each="file : ${files}">
             <td th:text="${file.fileName}">Onions</td>
+            <td th:text="${file.lastCommit.name}">Onions</td>
         </tr>
     </table>
 

@@ -2,19 +2,21 @@ package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.form.CommitForm;
 import com.sabinhantu.vcs.model.*;
-import com.sabinhantu.vcs.repository.BranchRepository;
-import com.sabinhantu.vcs.repository.CommitRepository;
-import com.sabinhantu.vcs.repository.DBFileRepository;
-import com.sabinhantu.vcs.repository.DeltaSimulateRepository;
+import com.sabinhantu.vcs.repository.*;
 import com.sabinhantu.vcs.service.DBFileStorageService;
 import com.sabinhantu.vcs.service.UserService;
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +41,9 @@ public class CommitController {
 
     @Autowired
     private DeltaSimulateRepository deltaSimulateRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @GetMapping("/{username}/{projectUrl}/commits/{branchName}")
     public String toCommitsDetails(@PathVariable final String username,
@@ -79,22 +84,89 @@ public class CommitController {
         newCommit.setCreator(userLogged);
         commitRepository.save(newCommit);
 
+        Project project = projectRepository.findByUrl(projectUrl);
+        Branch currentBranch = getCurrentBranch(username, projectUrl, branchName);
+
         // List keep id for each file uploaded
         List<Long> filesIds = new ArrayList<>();
+
+
         for (MultipartFile file : files) {
-            dbFileStorageService.storeFile(file);
-            long countFilesRepository = dbFileRepository.count();
-            filesIds.add(countFilesRepository);
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+            // if no changes occured to a file, algorithm skips this file
+            try {
+                if (newFileEqualsOldFile(project, currentBranch, file)) {
+                    continue;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            DBFile dbFile = null;
+            Patch patch = null;
+            // if file already exist in branch and was changed
+            if (doesFileExistInCurrentBranch(currentBranch, file)) {
+                dbFile = dbFileRepository.getOne(getFileId(project, currentBranch, fileName));
+                String stringFromOriginal = new String(dbFile.getData());
+                String stringFromNew = null;
+                try {
+                    // update file's data and last commit
+                    dbFile.setData(file.getBytes());
+                    dbFile.setLastCommit(newCommit);
+                    dbFileRepository.save(dbFile);
+                    stringFromNew = new String(file.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // create patch
+                patch = getPatch(stringFromOriginal, stringFromNew);
+                // deltas create and save to DeltaSimulate Entity
+//                for (Delta delta : patch.getDeltas()) {
+//                    DeltaSimulate deltaSimulate = transformDeltaInDeltaSimulate(delta);
+//                    deltaSimulate.setFile(dbFile);
+//                    deltaSimulateRepository.save(deltaSimulate);
+//                    newCommit.addDeltaSimulate(deltaSimulate);
+//                }
+//                commitRepository.save(newCommit);
+            } else {
+                // when file is not already in branch
+                dbFileStorageService.storeFile(file);
+                // get last uploaded file's id
+                long countFilesRepository = dbFileRepository.count();
+                filesIds.add(countFilesRepository);
+
+                dbFile = dbFileRepository.getOne(countFilesRepository);
+                dbFile.setLastCommit(newCommit);
+                dbFileRepository.save(dbFile);
+                currentBranch.addFile(dbFile);
+
+                String stringFromFile = new String(dbFile.getData());
+                patch = getPatch("", stringFromFile);
+//                DeltaSimulate deltaSimulate = new DeltaSimulate("just new file", 2, "s", 2, "s");
+//                deltaSimulate.setFile(dbFile);
+//                deltaSimulateRepository.save(deltaSimulate);
+//                newCommit.addDeltaSimulate(deltaSimulate);
+//                commitRepository.save(newCommit);
+            }
+
+            for (Delta delta : patch.getDeltas()) {
+                DeltaSimulate deltaSimulate = transformDeltaInDeltaSimulate(delta);
+                deltaSimulate.setFile(dbFile);
+                deltaSimulateRepository.save(deltaSimulate);
+                newCommit.addDeltaSimulate(deltaSimulate);
+            }
+            commitRepository.save(newCommit);
         }
 
-        // Adding files to the current branch
-        Branch currentBranch = getCurrentBranch(username, projectUrl, branchName);
-        for (Long fileId : filesIds) {
-            DBFile dbFile = dbFileRepository.getOne(fileId);
-//            newCommit.addFile(dbFile);
-            currentBranch.addFile(dbFile);
-//            commitRepository.save(newCommit);
-        }
+//        // Adding files to the current branch
+//        for (Long fileId : filesIds) {
+//            DBFile dbFile = dbFileRepository.getOne(fileId);
+//            dbFile.setLastCommit(newCommit);
+//            dbFileRepository.save(dbFile);
+//            currentBranch.addFile(dbFile);
+//        }
 
         currentBranch.addCommit(newCommit);
         branchRepository.save(currentBranch);
@@ -108,13 +180,17 @@ public class CommitController {
                                    @PathVariable final String branchName,
                                    @PathVariable final String commitIdString,
                                    Model model) {
-//        Long commitId = Long.parseLong(commitIdString);
-//        Commit commit = getCurrentCommit(getCurrentBranch(username, projectUrl, branchName), commitId);
-//        if (commit == null) {
-//            return "error";
-//        }
-//        model.addAttribute("commit", commit);
-//
+        Long commitId = Long.parseLong(commitIdString);
+        Commit commit = getCurrentCommit(getCurrentBranch(username, projectUrl, branchName), commitId);
+        if (commit == null) {
+            return "error";
+        }
+        model.addAttribute("commit", commit);
+        model.addAttribute("deltas", commit.getDeltaSimulateSet());
+
+
+//          CUM GET FILES SI APOI DISPLAY THESE BITCHES AS FILEFORM
+
 //        List<FileForm> filesForm = new ArrayList<>();
 //        Set<DBFile> dbFiles = commit.getFiles();
 //        for (DBFile dbFile : dbFiles) {
@@ -147,6 +223,46 @@ public class CommitController {
         return null;
     }
 
+    protected boolean doesFileExistInCurrentBranch(Branch currentBranch, MultipartFile newFile) {
+        String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
+        for (DBFile file : currentBranch.getFiles()) {
+            if (file.getFileName().equals(fileName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean newFileEqualsOldFile(Project project, Branch currentBranch, MultipartFile newFile) throws IOException {
+        String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
+        if (doesFileExistInCurrentBranch(currentBranch, newFile)) {
+            // check if data is the same
+            DBFile file = dbFileRepository.getOne(getFileId(project, currentBranch, fileName));
+            String originalString = new String(file.getData());
+            String revisedString = new String(newFile.getBytes());
+            if (originalString.equals(revisedString)) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+        return false;
+    }
+
+    protected Long getFileId(Project project, Branch branch, String fileName) {
+        for (Branch br : project.getBranches()) {
+            if (br.getId().equals(branch.getId())) {
+                for (DBFile file : br.getFiles()) {
+                    if (file.getFileName().equals(fileName)) {
+                        return file.getId();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     protected Commit getCurrentCommit(Branch branch, Long commitId) {
         Set<Commit> commits = branch.getCommits();
         for (Commit commit : commits) {
@@ -171,6 +287,42 @@ public class CommitController {
             }
         }
         return false;
+    }
+
+    // java-diff-utils
+
+    protected Patch getPatch(String original, String revised) {
+        List<String> originalList = stringToListOfStrings(original);
+        List<String> revisedList  = stringToListOfStrings(revised);
+
+        // diff parameters are lists of strings
+        Patch patch = DiffUtils.diff(originalList, revisedList);
+        return patch;
+    }
+
+    protected List<String> stringToListOfStrings(String str) {
+        String[] arr = str.split("\n");
+        List<String> list = Arrays.asList(arr);
+        return list;
+    }
+
+    protected String linesToString(List<?> lines) {
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < lines.size(); i++) {
+            res.append(lines.get(i));
+            res.append("\n");
+        }
+        return res.toString();
+    }
+
+    protected DeltaSimulate transformDeltaInDeltaSimulate(Delta delta) {
+        String deltaType = delta.getType().toString();
+        int positionOrig = delta.getOriginal().getPosition();
+        String linesOrig = linesToString(delta.getOriginal().getLines());
+
+        int positionRevis = delta.getRevised().getPosition();
+        String linesRevis = linesToString(delta.getRevised().getLines());
+        return new DeltaSimulate(deltaType, positionOrig, linesOrig, positionRevis, linesRevis);
     }
 
 }
