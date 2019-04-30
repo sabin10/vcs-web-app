@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -87,14 +86,11 @@ public class CommitController {
         Project project = projectRepository.findByUrl(projectUrl);
         Branch currentBranch = getCurrentBranch(username, projectUrl, branchName);
 
-        // List keep id for each file uploaded
-        List<Long> filesIds = new ArrayList<>();
-
 
         for (MultipartFile file : files) {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-            // if no changes occured to a file, algorithm skips this file
+            /** if no changes occured to a file, algorithm skips this file **/
             try {
                 if (newFileEqualsOldFile(project, currentBranch, file)) {
                     continue;
@@ -103,11 +99,9 @@ public class CommitController {
                 e.printStackTrace();
             }
 
-            DBFile dbFile = null;
-            Patch patch = null;
-            // if file already exist in branch and was changed
+            /** if file already exist in branch and was changed **/
             if (doesFileExistInCurrentBranch(currentBranch, file)) {
-                dbFile = dbFileRepository.getOne(getFileId(project, currentBranch, fileName));
+                DBFile dbFile = dbFileRepository.getOne(getFileId(project, currentBranch, fileName));
                 String stringFromOriginal = new String(dbFile.getData());
                 String stringFromNew = null;
                 try {
@@ -121,53 +115,38 @@ public class CommitController {
                 }
 
                 // create patch
-                patch = getPatch(stringFromOriginal, stringFromNew);
+                Patch patch = getPatch(stringFromOriginal, stringFromNew);
                 // deltas create and save to DeltaSimulate Entity
-//                for (Delta delta : patch.getDeltas()) {
-//                    DeltaSimulate deltaSimulate = transformDeltaInDeltaSimulate(delta);
-//                    deltaSimulate.setFile(dbFile);
-//                    deltaSimulateRepository.save(deltaSimulate);
-//                    newCommit.addDeltaSimulate(deltaSimulate);
-//                }
-//                commitRepository.save(newCommit);
+                for (Delta delta : patch.getDeltas()) {
+                    DeltaSimulate deltaSimulate = transformDeltaInDeltaSimulate(delta);
+                    deltaSimulate.setFile(dbFile);
+                    deltaSimulateRepository.save(deltaSimulate);
+                    newCommit.addDeltaSimulate(deltaSimulate);
+                }
+                commitRepository.save(newCommit);
             } else {
-                // when file is not already in branch
+                /** when file is not already in branch **/
                 dbFileStorageService.storeFile(file);
                 // get last uploaded file's id
                 long countFilesRepository = dbFileRepository.count();
-                filesIds.add(countFilesRepository);
 
-                dbFile = dbFileRepository.getOne(countFilesRepository);
+                DBFile dbFile = dbFileRepository.getOne(countFilesRepository);
                 dbFile.setLastCommit(newCommit);
                 dbFileRepository.save(dbFile);
                 currentBranch.addFile(dbFile);
 
                 String stringFromFile = new String(dbFile.getData());
-                patch = getPatch("", stringFromFile);
-//                DeltaSimulate deltaSimulate = new DeltaSimulate("just new file", 2, "s", 2, "s");
-//                deltaSimulate.setFile(dbFile);
-//                deltaSimulateRepository.save(deltaSimulate);
-//                newCommit.addDeltaSimulate(deltaSimulate);
-//                commitRepository.save(newCommit);
-            }
+                Patch patch = getPatch("", stringFromFile);
 
-            for (Delta delta : patch.getDeltas()) {
-                DeltaSimulate deltaSimulate = transformDeltaInDeltaSimulate(delta);
+                // first upload has only one delta
+                DeltaSimulate deltaSimulate = transformDeltaInDeltaSimulate(patch.getDeltas().get(0));
                 deltaSimulate.setFile(dbFile);
                 deltaSimulateRepository.save(deltaSimulate);
                 newCommit.addDeltaSimulate(deltaSimulate);
+                commitRepository.save(newCommit);
+
             }
-            commitRepository.save(newCommit);
         }
-
-//        // Adding files to the current branch
-//        for (Long fileId : filesIds) {
-//            DBFile dbFile = dbFileRepository.getOne(fileId);
-//            dbFile.setLastCommit(newCommit);
-//            dbFileRepository.save(dbFile);
-//            currentBranch.addFile(dbFile);
-//        }
-
         currentBranch.addCommit(newCommit);
         branchRepository.save(currentBranch);
 
