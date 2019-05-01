@@ -110,7 +110,8 @@ public class CommitController {
                 try {
                     // update file's data and last commit
                     dbFile.setData(file.getBytes());
-                    dbFile.setLastCommit(newCommit);
+                    //dbFile.setLastCommit(newCommit);
+                    dbFile.getCommits().add(newCommit);
                     dbFileRepository.save(dbFile);
                     stringFromNew = new String(file.getBytes());
                 } catch (IOException e) {
@@ -134,7 +135,8 @@ public class CommitController {
                 long countFilesRepository = dbFileRepository.count();
 
                 DBFile dbFile = dbFileRepository.getOne(countFilesRepository);
-                dbFile.setLastCommit(newCommit);
+                //dbFile.setLastCommit(newCommit);
+                dbFile.getCommits().add(newCommit);
                 dbFileRepository.save(dbFile);
                 currentBranch.addFile(dbFile);
 
@@ -173,21 +175,15 @@ public class CommitController {
         model.addAttribute("commit", commit);
         model.addAttribute("deltas", commit.getDeltaSimulateSet());
 
-//        List<FileForm> filesForm = new ArrayList<>();
-//        Set<DBFile> dbFiles = commit.getFiles();
-//        for (DBFile dbFile : dbFiles) {
-//            filesForm.add(new FileForm(dbFile.getFileName(), new String(dbFile.getData())));
+//        // create empty patch
+//        Patch patch = new Patch();
+//        for (DeltaSimulate deltaSimulate : commit.getDeltaSimulateSet()) {
+//            Delta delta = transformSimulateInDelta(deltaSimulate);
+//            patch.addDelta(delta);
 //        }
-//        model.addAttribute("filesForm", filesForm);
-
-        // create empty patch
-        Patch patch = new Patch();
-        for (DeltaSimulate deltaSimulate : commit.getDeltaSimulateSet()) {
-            Delta delta = transformSimulateInDelta(deltaSimulate);
-            patch.addDelta(delta);
-        }
-
-        String result = getDiff("", patch);
+//
+//        // result using java-diff's patch
+//        String result = getDiff("", patch);
 
         return "commitdetails";
     }
