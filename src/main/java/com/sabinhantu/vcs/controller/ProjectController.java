@@ -27,6 +27,9 @@ public class ProjectController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BranchController branchController;
+
 
     @GetMapping("/{username}/{projectUrl}")
     public String userRepository(@PathVariable final String username,
@@ -52,7 +55,7 @@ public class ProjectController {
         model.addAttribute("currentBranch", "master");
 
         // Retrieve files from db
-        Set<DBFile> files = getMasterBranch(username, projectUrl).getFiles();
+        Set<DBFile> files = branchController.getMasterBranch(username, projectUrl).getFiles();
         model.addAttribute("files", files);
 
         return "project";
@@ -76,7 +79,6 @@ public class ProjectController {
         return "projectsettings";
     }
 
-    // TODO: Functie asa sau throw exception? intreaba Karla
     protected boolean doesRepositoryExist(String username, String repositoryUrl) {
         User userRequested = userService.findByUsername(username);
         Project projectRequested = projectRepository.findByUrl(repositoryUrl);
@@ -90,20 +92,5 @@ public class ProjectController {
         if (user.getProjects().contains(project))
             return true;
         return false;
-    }
-
-    protected Branch getMasterBranch(String username, String projectUrl) {
-        User user = userRepository.findByUsername(username);
-        Set<Project> projects = user.getProjects();
-        for (Project project : projects) {
-            if (project.getUrl().equals(projectUrl)) {
-                Set<Branch> branches = project.getBranches();
-                for (Branch branch : branches) {
-                    if (branch.getName().equals("master"))
-                        return branch;
-                }
-            }
-        }
-        return null;
     }
 }

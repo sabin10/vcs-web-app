@@ -104,8 +104,6 @@ public class BranchController {
         return "redirect:/" + username + "/" + projectUrl + "/settings?branchnotexist";
     }
 
-    // TODO: singleton class for these methods?
-
     protected Branch getMasterBranch(String username, String projectUrl) {
         User user = userRepository.findByUsername(username);
         Set<Project> projects = user.getProjects();

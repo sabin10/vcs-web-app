@@ -14,7 +14,7 @@ import java.util.Set;
 @Controller
 public class FileDisplayController {
     @Autowired
-    CommitController commitController;
+    private BranchController branchController;
 
     @GetMapping("/{username}/{projectUrl}/{branchName}/file/{fileName}")
     public String displayFile(@PathVariable final String username,
@@ -23,7 +23,7 @@ public class FileDisplayController {
                               @PathVariable final String fileName,
                               Model model) {
 
-        Branch currentBranch = commitController.getCurrentBranch(username, projectUrl, branchName);
+        Branch currentBranch = branchController.getCurrentBranch(username, projectUrl, branchName);
         Set<DBFile> files = currentBranch.getFiles();
         for (DBFile file : files) {
             if (file.getFileName().equals(fileName)) {

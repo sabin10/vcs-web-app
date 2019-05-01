@@ -44,12 +44,15 @@ public class CommitController {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private BranchController branchController;
+
     @GetMapping("/{username}/{projectUrl}/commits/{branchName}")
     public String toCommitsDetails(@PathVariable final String username,
                                    @PathVariable final String projectUrl,
                                    @PathVariable final String branchName,
                                    Model model) {
-        Branch currentBranch = getCurrentBranch(username, projectUrl, branchName);
+        Branch currentBranch = branchController.getCurrentBranch(username, projectUrl, branchName);
         Set<Commit> commits = currentBranch.getCommits();
         model.addAttribute("commits", commits);
         model.addAttribute("username", username);
@@ -84,7 +87,7 @@ public class CommitController {
         commitRepository.save(newCommit);
 
         Project project = projectRepository.findByUrl(projectUrl);
-        Branch currentBranch = getCurrentBranch(username, projectUrl, branchName);
+        Branch currentBranch = branchController.getCurrentBranch(username, projectUrl, branchName);
 
 
         for (MultipartFile file : files) {
@@ -159,7 +162,7 @@ public class CommitController {
                                    @PathVariable final String commitIdString,
                                    Model model) {
         Long commitId = Long.parseLong(commitIdString);
-        Commit commit = getCurrentCommit(getCurrentBranch(username, projectUrl, branchName), commitId);
+        Commit commit = getCurrentCommit(branchController.getCurrentBranch(username, projectUrl, branchName), commitId);
         if (commit == null) {
             return "error";
         }
@@ -180,22 +183,6 @@ public class CommitController {
         String[] arr = str.split("\n");
         List<?> list = Arrays.asList(arr);
         return list;
-    }
-
-    protected Branch getCurrentBranch(String username, String projectUrl, String branchName) {
-        User user = userService.findByUsername(username);
-        Set<Project> projects = user.getProjects();
-        for (Project project : projects) {
-            if (project.getUrl().equals(projectUrl)) {
-                Set<Branch> branches = project.getBranches();
-                for (Branch branch : branches) {
-                    if (branch.getName().equals(branchName)) {
-                        return branch;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     protected boolean doesFileExistInCurrentBranch(Branch currentBranch, MultipartFile newFile) {
