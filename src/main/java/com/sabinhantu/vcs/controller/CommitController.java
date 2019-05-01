@@ -5,9 +5,7 @@ import com.sabinhantu.vcs.model.*;
 import com.sabinhantu.vcs.repository.*;
 import com.sabinhantu.vcs.service.DBFileStorageService;
 import com.sabinhantu.vcs.service.UserService;
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
+import difflib.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -85,6 +83,7 @@ public class CommitController {
         User userLogged = userService.findByUsername(AccountController.loggedInUsername());
         newCommit.setCreator(userLogged);
         commitRepository.save(newCommit);
+        boolean commitMadeChanges = false;
 
         Project project = projectRepository.findByUrl(projectUrl);
         Branch currentBranch = branchController.getCurrentBranch(username, projectUrl, branchName);
@@ -101,6 +100,7 @@ public class CommitController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            commitMadeChanges = true;
 
             /** if file already exist in branch and was changed **/
             if (doesFileExistInCurrentBranch(currentBranch, file)) {
@@ -149,8 +149,12 @@ public class CommitController {
                 commitRepository.save(newCommit);
             }
         }
-        currentBranch.addCommit(newCommit);
-        branchRepository.save(currentBranch);
+        if (commitMadeChanges) {
+            currentBranch.addCommit(newCommit);
+            branchRepository.save(currentBranch);
+        } else {
+            commitRepository.delete(newCommit);
+        }
 
         return "redirect:/" + username + "/" + projectUrl + "/tree/" + branchName;
     }
@@ -176,13 +180,16 @@ public class CommitController {
 //        }
 //        model.addAttribute("filesForm", filesForm);
 
-        return "commitdetails";
-    }
+        // create empty patch
+        Patch patch = new Patch();
+        for (DeltaSimulate deltaSimulate : commit.getDeltaSimulateSet()) {
+            Delta delta = transformSimulateInDelta(deltaSimulate);
+            patch.addDelta(delta);
+        }
 
-    private List<?> stringToLinesList(String str) {
-        String[] arr = str.split("\n");
-        List<?> list = Arrays.asList(arr);
-        return list;
+        String result = getDiff("", patch);
+
+        return "commitdetails";
     }
 
     protected boolean doesFileExistInCurrentBranch(Branch currentBranch, MultipartFile newFile) {
@@ -262,6 +269,29 @@ public class CommitController {
         return patch;
     }
 
+    protected String getDiff(String originalDataString, Patch patch) {
+        List<String> original = stringToListOfStrings(originalDataString);
+
+        try {
+            List<String> result = (List<String>) patch.applyTo(original);
+            StringBuilder stringList = new StringBuilder();
+
+            for(int i = 0; i < result.size(); i++) {
+                String s = result.get(i);
+                if(i != result.size() - 1)
+                    stringList.append(s + "\n");
+                else
+                    stringList.append(s);
+            }
+
+            String merge = String.valueOf(stringList);
+            return merge;
+        } catch (PatchFailedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected List<String> stringToListOfStrings(String str) {
         String[] arr = str.split("\n");
         List<String> list = Arrays.asList(arr);
@@ -277,6 +307,12 @@ public class CommitController {
         return res.toString();
     }
 
+    protected List<?> stringToLinesList(String str) {
+        String[] arr = str.split("\n");
+        List<?> list = Arrays.asList(arr);
+        return list;
+    }
+
     protected DeltaSimulate transformDeltaInDeltaSimulate(Delta delta) {
         String deltaType = delta.getType().toString();
         int positionOrig = delta.getOriginal().getPosition();
@@ -285,6 +321,16 @@ public class CommitController {
         int positionRevis = delta.getRevised().getPosition();
         String linesRevis = linesToString(delta.getRevised().getLines());
         return new DeltaSimulate(deltaType, positionOrig, linesOrig, positionRevis, linesRevis);
+    }
+
+    protected Delta transformSimulateInDelta(DeltaSimulate deltaSimulate) {
+        Chunk originalChunk = new Chunk(deltaSimulate.getPositionOriginal(), stringToLinesList(deltaSimulate.getLinesOriginal()));
+        Chunk revisedChunk = new Chunk(deltaSimulate.getPositionRevised(), stringToLinesList(deltaSimulate.getLinesRevised()));
+        if (deltaSimulate.getDeltaType().equals("INSERT"))
+            return new InsertDelta(originalChunk, revisedChunk);
+        if (deltaSimulate.getDeltaType().equals("CHANGE"))
+            return new ChangeDelta(originalChunk, revisedChunk);
+        return new DeleteDelta(originalChunk, revisedChunk);
     }
 
 }
