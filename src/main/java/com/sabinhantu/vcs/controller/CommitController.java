@@ -144,7 +144,6 @@ public class CommitController {
                 deltaSimulateRepository.save(deltaSimulate);
                 newCommit.addDeltaSimulate(deltaSimulate);
                 commitRepository.save(newCommit);
-
             }
         }
         currentBranch.addCommit(newCommit);
@@ -166,9 +165,6 @@ public class CommitController {
         }
         model.addAttribute("commit", commit);
         model.addAttribute("deltas", commit.getDeltaSimulateSet());
-
-
-//          CUM GET FILES SI APOI DISPLAY THESE BITCHES AS FILEFORM
 
 //        List<FileForm> filesForm = new ArrayList<>();
 //        Set<DBFile> dbFiles = commit.getFiles();

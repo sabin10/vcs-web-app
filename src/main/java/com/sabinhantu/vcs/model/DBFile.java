@@ -81,6 +81,15 @@ public class DBFile implements Comparable<DBFile>{
         this.lastCommit = commit;
     }
 
+    public String getStringData() {
+        String original = new String(this.data);
+        StringBuilder stringBuilder = new StringBuilder();
+        // remove tab space from first line
+        stringBuilder.append("\n");
+        stringBuilder.append(original);
+        return stringBuilder.toString();
+    }
+
     //sort ascending
     @Override
     public int compareTo(DBFile o) {
