@@ -3,6 +3,19 @@
 
 <body>
     <h4 th:text="${fileForm.fileName}">file name</h4>
+    <table class="table table-striped">
+        <tr>
+            <th>Commit Name</th>
+            <th>Commit Description</th>
+            <th>Commit Creator</th>
+        </tr>
+        <tr th:each="commit : ${commits}">
+            <th th:text="${commit.name}">Onions</th>
+            <!--<th th:text="${commit.name}">Onions</th>-->
+            <th th:text="${commit.description}">Onions</th>
+            <th th:text="${commit.creator.username}">Onions</th>
+        </tr>
+    </table>
     <pre style="
     /*background-color: #eee;*/
     border: 1px solid #999;

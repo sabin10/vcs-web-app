@@ -21,7 +21,11 @@ public class FileForm {
     }
 
     public String getFileData() {
-        return fileData;
+        StringBuilder stringBuilder = new StringBuilder();
+        // remove tab space from first line
+        stringBuilder.append("\n");
+        stringBuilder.append(fileData);
+        return stringBuilder.toString();
     }
 
     public void setFileData(String fileData) {

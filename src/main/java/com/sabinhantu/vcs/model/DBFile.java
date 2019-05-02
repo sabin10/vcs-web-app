@@ -94,11 +94,7 @@ public class DBFile implements Comparable<DBFile>{
 
     public String getStringData() {
         String original = new String(this.data);
-        StringBuilder stringBuilder = new StringBuilder();
-        // remove tab space from first line
-        stringBuilder.append("\n");
-        stringBuilder.append(original);
-        return stringBuilder.toString();
+        return original;
     }
 
     //sort ascending

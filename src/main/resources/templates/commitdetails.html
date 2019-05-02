@@ -20,19 +20,30 @@
         </table>
 
         <!--<br>-->
-        <!--<div th:each="fileForm : ${filesForm}">-->
-            <!--<h4 th:text="${fileForm.fileName}">file name</h4>-->
-            <!--<pre style="-->
-                    <!--/*background-color: #eee;*/-->
-                    <!--border: 1px solid #999;-->
-                    <!--display: block;-->
-                    <!--padding: 20px;">-->
-                <!--<code th:text="${fileForm.fileData}">-->
-                    <!--CodeText-->
-                <!--</code>-->
-            <!--</pre>-->
-            <!--<br>-->
-        <!--</div>-->
+        <!--<table class="table table-striped">-->
+            <!--<tr>-->
+                <!--<th>file</th>-->
+                <!--<th></th>-->
+            <!--</tr>-->
+            <!--<tr th:each="file : ${files}">-->
+                <!--<td th:text="${file.fileName}">Onions</td>-->
+            <!--</tr>-->
+        <!--</table>-->
+
+        <br>
+        <div th:each="fileForm : ${fileForms}">
+            <h4 th:text="${fileForm.fileName}">file name</h4>
+            <pre style="
+                    /*background-color: #eee;*/
+                    border: 1px solid #999;
+                    display: block;
+                    padding: 20px;">
+                <code th:text="${fileForm.fileData}">
+                    CodeText
+                </code>
+            </pre>
+            <br>
+        </div>
 
     </body>
 </html>

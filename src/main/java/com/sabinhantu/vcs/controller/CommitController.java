@@ -1,6 +1,7 @@
 package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.form.CommitForm;
+import com.sabinhantu.vcs.form.FileForm;
 import com.sabinhantu.vcs.model.*;
 import com.sabinhantu.vcs.repository.*;
 import com.sabinhantu.vcs.service.DBFileStorageService;
@@ -15,9 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class CommitController {
@@ -102,9 +101,11 @@ public class CommitController {
             }
             commitMadeChanges = true;
 
+            Patch patch = null;
+            DBFile dbFile = null;
             /** if file already exist in branch and was changed **/
             if (doesFileExistInCurrentBranch(currentBranch, file)) {
-                DBFile dbFile = dbFileRepository.getOne(getFileId(project, currentBranch, fileName));
+                dbFile = dbFileRepository.getOne(getFileId(project, currentBranch, fileName));
                 String stringFromOriginal = new String(dbFile.getData());
                 String stringFromNew = null;
                 try {
@@ -119,37 +120,31 @@ public class CommitController {
                 }
 
                 // create patch
-                Patch patch = getPatch(stringFromOriginal, stringFromNew);
-                // deltas create and save to DeltaSimulate Entity
-                for (Delta delta : patch.getDeltas()) {
-                    DeltaSimulate deltaSimulate = transformDeltaInDeltaSimulate(delta);
-                    deltaSimulate.setFile(dbFile);
-                    deltaSimulateRepository.save(deltaSimulate);
-                    newCommit.addDeltaSimulate(deltaSimulate);
-                }
-                commitRepository.save(newCommit);
+                patch = getPatch(stringFromOriginal, stringFromNew);
             } else {
                 /** when file is not already in branch **/
                 dbFileStorageService.storeFile(file);
                 // get last uploaded file's id
                 long countFilesRepository = dbFileRepository.count();
 
-                DBFile dbFile = dbFileRepository.getOne(countFilesRepository);
+                dbFile = dbFileRepository.getOne(countFilesRepository);
                 //dbFile.setLastCommit(newCommit);
                 dbFile.getCommits().add(newCommit);
                 dbFileRepository.save(dbFile);
                 currentBranch.addFile(dbFile);
 
                 String stringFromFile = new String(dbFile.getData());
-                Patch patch = getPatch("", stringFromFile);
+                patch = getPatch("", stringFromFile);
 
-                // first upload has only one delta
-                DeltaSimulate deltaSimulate = transformDeltaInDeltaSimulate(patch.getDeltas().get(0));
+            }
+            // create deltas and save to DB
+            for (Delta delta : patch.getDeltas()) {
+                DeltaSimulate deltaSimulate = transformDeltaInDeltaSimulate(delta);
                 deltaSimulate.setFile(dbFile);
                 deltaSimulateRepository.save(deltaSimulate);
                 newCommit.addDeltaSimulate(deltaSimulate);
-                commitRepository.save(newCommit);
             }
+            commitRepository.save(newCommit);
         }
         if (commitMadeChanges) {
             currentBranch.addCommit(newCommit);
@@ -168,22 +163,51 @@ public class CommitController {
                                    @PathVariable final String commitIdString,
                                    Model model) {
         Long commitId = Long.parseLong(commitIdString);
-        Commit commit = getCurrentCommit(branchController.getCurrentBranch(username, projectUrl, branchName), commitId);
-        if (commit == null) {
+        Commit currentCommit = getCurrentCommit(branchController.getCurrentBranch(username, projectUrl, branchName), commitId);
+        if (currentCommit == null) {
             return "error";
         }
-        model.addAttribute("commit", commit);
-        model.addAttribute("deltas", commit.getDeltaSimulateSet());
+        model.addAttribute("commit", currentCommit);
+        model.addAttribute("deltas", currentCommit.getDeltaSimulateSet());
 
-//        // create empty patch
-//        Patch patch = new Patch();
-//        for (DeltaSimulate deltaSimulate : commit.getDeltaSimulateSet()) {
-//            Delta delta = transformSimulateInDelta(deltaSimulate);
-//            patch.addDelta(delta);
-//        }
-//
-//        // result using java-diff's patch
-//        String result = getDiff("", patch);
+        // get files updated in current commit
+        SortedSet<DBFile> filesUpdated = new TreeSet<>();
+        for (DeltaSimulate deltaSimulate : currentCommit.getDeltaSimulateSet()) {
+            filesUpdated.add(deltaSimulate.getFile());
+        }
+
+        // list of files for view
+        List<FileForm> fileForms = new ArrayList<>();
+
+        for (DBFile fileUpdated: filesUpdated) {
+            // reverse set of commits for reconstructing data from first commit until current
+            SortedSet<Commit> commits = new TreeSet<>(Collections.reverseOrder());
+            commits.addAll(fileUpdated.getCommits());
+
+            // get current commit position from the sortedset
+            int currentCommitIndex = commits.headSet(currentCommit).size();
+            int counter = 0;
+
+            String resultData = "";
+            for (Commit commit : commits) {
+                // create patch
+                Patch patch = new Patch();
+                for (DeltaSimulate deltaSimulate : commit.getDeltaSimulateSet()) {
+                    if (deltaSimulate.getFile().getFileName().equals(fileUpdated.getFileName())) {
+                        Delta delta = transformSimulateInDelta(deltaSimulate);
+                        patch.addDelta(delta);
+                    }
+                }
+                resultData = getDiff(resultData, patch);
+
+                if (counter++ == currentCommitIndex) {
+                    fileForms.add(new FileForm(fileUpdated.getFileName(), resultData));
+                    break;
+                }
+            }
+        }
+
+        model.addAttribute("fileForms", fileForms);
 
         return "commitdetails";
     }
