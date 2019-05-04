@@ -8,28 +8,6 @@
             <h5 th:text="${commit.createdAt}">commit date</h5>
         </div>
 
-        <table class="table table-striped">
-            <tr>
-                <th>delta type</th>
-                <th>file from</th>
-            </tr>
-            <tr th:each="delta : ${deltas}">
-                <td th:text="${delta.deltaType}">Onions</td>
-                <td th:text="${delta.file.fileName}">Onions</td>
-            </tr>
-        </table>
-
-        <!--<br>-->
-        <!--<table class="table table-striped">-->
-            <!--<tr>-->
-                <!--<th>file</th>-->
-                <!--<th></th>-->
-            <!--</tr>-->
-            <!--<tr th:each="file : ${files}">-->
-                <!--<td th:text="${file.fileName}">Onions</td>-->
-            <!--</tr>-->
-        <!--</table>-->
-
         <br>
         <div th:each="fileForm : ${fileForms}">
             <h4 th:text="${fileForm.fileName}">file name</h4>

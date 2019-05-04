@@ -168,7 +168,6 @@ public class CommitController {
             return "error";
         }
         model.addAttribute("commit", currentCommit);
-        model.addAttribute("deltas", currentCommit.getDeltaSimulateSet());
 
         // get files updated in current commit
         SortedSet<DBFile> filesUpdated = new TreeSet<>();
@@ -183,33 +182,36 @@ public class CommitController {
             // reverse set of commits for reconstructing data from first commit until current
             SortedSet<Commit> commits = new TreeSet<>(Collections.reverseOrder());
             commits.addAll(fileUpdated.getCommits());
-
-            // get current commit position from the sortedset
-            int currentCommitIndex = commits.headSet(currentCommit).size();
-            int counter = 0;
-
-            String resultData = "";
-            for (Commit commit : commits) {
-                // create patch
-                Patch patch = new Patch();
-                for (DeltaSimulate deltaSimulate : commit.getDeltaSimulateSet()) {
-                    if (deltaSimulate.getFile().getFileName().equals(fileUpdated.getFileName())) {
-                        Delta delta = transformSimulateInDelta(deltaSimulate);
-                        patch.addDelta(delta);
-                    }
-                }
-                resultData = getDiff(resultData, patch);
-
-                if (counter++ == currentCommitIndex) {
-                    fileForms.add(new FileForm(fileUpdated.getFileName(), resultData));
-                    break;
-                }
-            }
+            String dataStringFile = constructStringDataForCurrentCommit(commits, currentCommit, fileUpdated);
+            fileForms.add(new FileForm(fileUpdated.getFileName(), dataStringFile));
         }
 
         model.addAttribute("fileForms", fileForms);
 
         return "commitdetails";
+    }
+
+    protected String constructStringDataForCurrentCommit(SortedSet<Commit> commits, Commit currentCommit, DBFile file) {
+        // knows when to stop
+        int currentCommitIndex = commits.headSet(currentCommit).size();
+        int counter = 0;
+        String resultData = "";
+        for (Commit commit : commits) {
+            // create patch
+            Patch patch = new Patch();
+            for (DeltaSimulate deltaSimulate : commit.getDeltaSimulateSet()) {
+                if (deltaSimulate.getFile().getFileName().equals(file.getFileName())) {
+                    Delta delta = transformSimulateInDelta(deltaSimulate);
+                    patch.addDelta(delta);
+                }
+            }
+            resultData = getDiff(resultData, patch);
+            if (counter++ == currentCommitIndex) {
+                break;
+            }
+        }
+        return resultData;
+
     }
 
     protected boolean doesFileExistInCurrentBranch(Branch currentBranch, MultipartFile newFile) {

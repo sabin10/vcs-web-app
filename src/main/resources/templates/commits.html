@@ -2,20 +2,34 @@
 <html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'user')}">
 
 <body>
-    <table class="table table-striped">
-        <tr>
-            <th>Commit Name</th>
-            <th>Commit Description</th>
-            <th>Commit Creator</th>
-        </tr>
-        <tr th:each="commit : ${commits}">
-            <th><a th:href="@{'/' + ${username} + '/' + ${projectUrl} + '/'
-            + ${branchName} + '/commit/' + ${commit.id}}" th:text="${commit.name}">
-                Onions</a></th>
-            <!--<th th:text="${commit.name}">Onions</th>-->
-            <th th:text="${commit.description}">Onions</th>
-            <th th:text="${commit.creator.username}">Onions</th>
-        </tr>
-    </table>
+    <!--<table class="table table-striped">-->
+        <!--<tr>-->
+            <!--<th>Commit Name</th>-->
+            <!--<th>Commit Description</th>-->
+            <!--<th>Commit Creator</th>-->
+        <!--</tr>-->
+        <!--<tr th:each="commit : ${commits}">-->
+            <!--<th><a th:href="@{'/' + ${username} + '/' + ${projectUrl} + '/'-->
+            <!--+ ${branchName} + '/commit/' + ${commit.id}}" th:text="${commit.name}">-->
+                <!--Onions</a></th>-->
+            <!--<th th:text="${commit.description}">Onions</th>-->
+            <!--<th th:text="${commit.creator.username}">Onions</th>-->
+        <!--</tr>-->
+    <!--</table>-->
+
+    <div th:each="commit : ${commits}">
+        <div style="
+        /*background-color: #eee;*/
+        border: 1px solid #999;
+        display: block;
+        padding: 20px;">
+            <h4><a th:href="@{'/' + ${username} + '/' + ${projectUrl} + '/'
+                + ${branchName} + '/commit/' + ${commit.id}}" th:text="${commit.name}">
+                Onions</a></h4>
+            <h6 th:text="'Commited by ' + ${commit.creator.username}">Onions</h6>
+            <h5 th:text="${commit.description}">Onions</h5>
+        </div>
+        <br>
+    </div>
 </body>
 </html>

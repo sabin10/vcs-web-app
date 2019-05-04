@@ -3,15 +3,16 @@
 
 <body>
     <h4 th:text="${fileForm.fileName}">file name</h4>
+    <h6 th:text="${currentCommit.name}">current commit</h6>
     <table class="table table-striped">
         <tr>
-            <th>Commit Name</th>
-            <th>Commit Description</th>
-            <th>Commit Creator</th>
+            <th>Commit</th>
+            <th>Description</th>
+            <th>Creator</th>
         </tr>
         <tr th:each="commit : ${commits}">
             <th><a th:href="@{'/' + ${username} + '/' + ${projectUrl} + '/'
-            + ${branchName} + '/commit/' + ${commit.id}}" th:text="${commit.name}">
+            + ${branchName} + '/' + ${commit.id} + '/file/' + ${fileForm.fileName}}" th:text="${commit.name}">
                 Onions</a></th>
             <!--<th th:text="${commit.name}">Onions</th>-->
             <th th:text="${commit.description}">Onions</th>
@@ -19,7 +20,6 @@
         </tr>
     </table>
     <pre style="
-    /*background-color: #eee;*/
     border: 1px solid #999;
     display: block;
     padding: 20px;">
