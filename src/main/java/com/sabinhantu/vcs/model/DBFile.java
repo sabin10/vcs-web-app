@@ -15,7 +15,7 @@ public class DBFile implements Comparable<DBFile>{
     private String fileType;
 
     @Lob
-    @Column(length = 100000, name = "data")
+    //@Column(name = "data", length = 5000)
     private byte[] data;
 
     @ManyToOne

@@ -30,10 +30,6 @@ public class FileDisplayController {
                 FileForm fileForm = new FileForm(file.getFileName(), file.getStringData());
 
                 Set<Commit> commits = file.getCommits();
-
-//                // reverse set
-//                SortedSet<Commit> commits = new TreeSet<>(Collections.reverseOrder());
-//                commits.addAll(file.getCommits());
                 model.addAttribute("fileForm", fileForm);
                 model.addAttribute("commits", commits);
             }

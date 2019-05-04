@@ -25,9 +25,13 @@ public class DeltaSimulate implements Comparable<DeltaSimulate>{
     private String deltaType;
 
     private int positionOriginal;
+
+    @Column(length = 5000)
     private String linesOriginal;
 
     private int positionRevised;
+
+    @Column(length = 5000)
     private String linesRevised;
 
     public DeltaSimulate() {
