@@ -4,7 +4,10 @@ import com.sabinhantu.vcs.model.Branch;
 import com.sabinhantu.vcs.model.Commit;
 import com.sabinhantu.vcs.model.DBFile;
 import com.sabinhantu.vcs.model.DeltaSimulate;
-import com.sabinhantu.vcs.repository.*;
+import com.sabinhantu.vcs.repository.BranchRepository;
+import com.sabinhantu.vcs.repository.CommitRepository;
+import com.sabinhantu.vcs.repository.DBFileRepository;
+import com.sabinhantu.vcs.repository.DeltaSimulateRepository;
 import com.sabinhantu.vcs.service.DBFileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,9 +23,6 @@ public class FileVersionController {
 
     @Autowired
     private CommitController commitController;
-
-    @Autowired
-    private ProjectRepository projectRepository;
 
     @Autowired
     private BranchRepository branchRepository;
@@ -60,15 +60,7 @@ public class FileVersionController {
         for (int i = 0; i < currentCommitIndex; i++) {
             // remove deltasimulate from commit.deltaSimulateSet and from db
             Commit lastCommit = file.getLastCommit();
-            Iterator<DeltaSimulate> itDelta = file.getLastCommit().getDeltaSimulateSet().iterator();
-            while (itDelta.hasNext()) {
-                DeltaSimulate deltaSimulate = itDelta.next();
-                if (deltaSimulate.getFile().getId().equals(fileId)) {
-                    itDelta.remove();
-                    deltaSimulateRepository.deleteById(deltaSimulate.getId());
-                }
-            }
-            commitRepository.save(lastCommit);
+            deleteDeltasOfFileFromInsideCommit(lastCommit, fileId);
 
             // remove commit from file.commits
             file.getCommits().remove(file.getLastCommit());
@@ -86,4 +78,62 @@ public class FileVersionController {
         dbFileRepository.save(file);
         return "redirect:/" + username + "/" + projectUrl + "/" + branchName + "/file/" + file.getFileName();
     }
+
+
+    @GetMapping("/{username}/{projectUrl}/{branchName}/{fileIdString}/deletefile")
+    public String deleteFileFromBranch(@PathVariable final String username,
+                                       @PathVariable final String projectUrl,
+                                       @PathVariable final String branchName,
+                                       @PathVariable final String fileIdString) {
+        Branch branch = branchController.getCurrentBranch(username, projectUrl, branchName);
+        Long fileId = Long.parseLong(fileIdString);
+        DBFile file = dbFileStorageService.getFile(fileId);
+
+        // remove file from branch.files and branch from dbfile.branches
+        branch.removeFile(file);
+        branchRepository.save(branch);
+
+        // remove deltas of current file from branch's commits
+        for (Commit commit : branch.getCommits()) {
+            deleteDeltasOfFileFromInsideCommit(commit, fileId);
+
+            // remove commit from dbfile.commits
+            if (dbfileContainsCommitId(file, commit.getId())) {
+                file.getCommits().remove(commit);
+            }
+            dbFileRepository.save(file);
+
+            // if commit.deltaSimulateSet is empty => delete commit from branch and db
+            if (commit.getDeltaSimulateSet().isEmpty()) {
+                branch.removeCommit(commit);
+                branchRepository.save(branch);
+            }
+        }
+        branchRepository.save(branch);
+
+        return "redirect:/" + username + "/" + projectUrl + "/tree/" + branchName;
+    }
+
+    protected void deleteDeltasOfFileFromInsideCommit(Commit commit, Long fileId) {
+        Iterator<DeltaSimulate> itDelta = commit.getDeltaSimulateSet().iterator();
+        while (itDelta.hasNext()) {
+            DeltaSimulate deltaSimulate = itDelta.next();
+            if (deltaSimulate.getFile().getId().equals(fileId)) {
+                itDelta.remove();
+                deltaSimulateRepository.deleteById(deltaSimulate.getId());
+            }
+        }
+        commitRepository.save(commit);
+    }
+
+    protected boolean dbfileContainsCommitId(DBFile file, Long commitId) {
+        for (Commit commit : file.getCommits()) {
+            if (commit.getId().equals(commitId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }
