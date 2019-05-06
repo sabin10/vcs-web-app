@@ -12,6 +12,14 @@
         </form>
     </div>
     <br>
+    <!--delete file button-->
+    <form th:action="@{'/' + ${username} + '/' + ${projectUrl} + '/'
+            + ${branchName} + '/' + ${fileForm.fileId} + '/deletefile' }" method="get">
+        <input type="hidden" name="_method" value="button" />
+        <button type="submit" id="submitButton" class="btn btn-danger">Delete file</button>
+    </form>
+
+    <br>
     <table class="table table-striped">
         <tr>
             <th>Commit</th>
