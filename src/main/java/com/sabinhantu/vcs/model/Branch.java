@@ -27,7 +27,10 @@ public class Branch {
     @OrderBy("id")
     private SortedSet<Commit> commits;
 
-    @OneToMany(mappedBy = "branch")
+    @ManyToMany
+    @JoinTable(name = "branch_dbfile",
+        joinColumns = {@JoinColumn(name = "branch_id")},
+        inverseJoinColumns = {@JoinColumn(name = "dbfile_id")})
     @OrderBy("id")
     private SortedSet<DBFile> files;
 
@@ -83,7 +86,13 @@ public class Branch {
 
     public void addFile(DBFile file) {
         this.files.add(file);
-        file.setBranch(this);
+//        file.setBranch(this);
+        file.getBranches().add(this);
+    }
+
+    public void removeFile(DBFile file) {
+        this.files.remove(file);
+        file.getBranches().remove(this);
     }
 
     public void addCommit(Commit commit) {

@@ -1,6 +1,8 @@
 package com.sabinhantu.vcs.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -18,9 +20,13 @@ public class DBFile implements Comparable<DBFile>{
     //@Column(name = "data", length = 5000)
     private byte[] data;
 
-    @ManyToOne
-    @JoinColumn(name = "branch_id")
-    private Branch branch;
+//    @ManyToOne
+//    @JoinColumn(name = "branch_id")
+//    private Branch branch;
+
+    @ManyToMany(mappedBy = "files")
+    private Set<Branch> branches;
+
 
     @ManyToMany
     @JoinTable(name = "dbfile_commit",
@@ -31,6 +37,7 @@ public class DBFile implements Comparable<DBFile>{
 
     public DBFile() {
         commits = new TreeSet<>();
+        branches = new HashSet<>();
     }
 
     public DBFile(String fileName, String fileType, byte[] data) {
@@ -72,12 +79,21 @@ public class DBFile implements Comparable<DBFile>{
         this.data = data;
     }
 
-    public Branch getBranch() {
-        return branch;
+//    public Branch getBranch() {
+//        return branch;
+//    }
+//
+//    public void setBranch(Branch branch) {
+//        this.branch = branch;
+//    }
+
+
+    public Set<Branch> getBranches() {
+        return branches;
     }
 
-    public void setBranch(Branch branch) {
-        this.branch = branch;
+    public void setBranches(Set<Branch> branches) {
+        this.branches = branches;
     }
 
     public SortedSet<Commit> getCommits() {

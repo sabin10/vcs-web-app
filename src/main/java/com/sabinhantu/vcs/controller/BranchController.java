@@ -79,6 +79,8 @@ public class BranchController {
         // When new branch is created, it will continue master branch
         Branch newBranch = new Branch(branchForm.getName());
         Set<Commit> masterCommits = getMasterBranch(username, projectUrl).getCommits();
+        // add files from master
+        newBranch.getFiles().addAll(getMasterBranch(username, projectUrl).getFiles());
         newBranch.getCommits().addAll(masterCommits);
         project.getBranches().add(newBranch);
         projectRepository.save(project);
