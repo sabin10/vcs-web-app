@@ -31,12 +31,12 @@ public class FileDisplayController {
                               Model model) {
         Branch currentBranch = branchController.getCurrentBranch(username, projectUrl, branchName);
         DBFile file = getFileFromBranch(currentBranch, fileName);
-        FileForm fileForm = new FileForm(file.getFileName(), file.getStringData());
+        FileForm fileForm = new FileForm(file.getFileName(), file.getStringData(), file.getId());
         Set<Commit> commits = file.getCommits();
         model.addAttribute("fileForm", fileForm);
         model.addAttribute("commits", commits);
-        model.addAttribute("currentCommit", ((SortedSet<Commit>) commits).first());
-
+        model.addAttribute("currentCommit", file.getLastCommit());
+        model.addAttribute("lastCommit", file.getLastCommit());
         return "filedisplay";
     }
 
@@ -52,6 +52,7 @@ public class FileDisplayController {
         Commit currentCommit = commitController.getCurrentCommit(currentBranch, commitId);
         model.addAttribute("currentCommit", currentCommit);
         DBFile file = getFileFromBranch(currentBranch, fileName);
+        model.addAttribute("lastCommit", file.getLastCommit());
         Set<Commit> commits = file.getCommits();
         model.addAttribute("commits", commits);
 
@@ -60,7 +61,7 @@ public class FileDisplayController {
         commitsFromStart.addAll(commits);
         String dataStringFile = commitController.
                 constructStringDataForCurrentCommit(commitsFromStart, currentCommit, file);
-        FileForm fileForm = new FileForm(file.getFileName(), dataStringFile);
+        FileForm fileForm = new FileForm(file.getFileName(), dataStringFile, file.getId());
         model.addAttribute("fileForm", fileForm);
         return "filedisplay";
     }

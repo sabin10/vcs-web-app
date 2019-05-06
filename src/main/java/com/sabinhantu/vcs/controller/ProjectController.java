@@ -79,6 +79,16 @@ public class ProjectController {
         return "projectsettings";
     }
 
+//    protected Project getProjectByUrlAndUser(String username, String projectUrl) {
+//        User user = userService.findByUsername(username);
+//        for (Project project : user.getProjects()) {
+//            if (project.getUrl().equals(projectUrl)) {
+//                return project;
+//            }
+//        }
+//        return null;
+//    }
+
     protected boolean doesRepositoryExist(String username, String repositoryUrl) {
         User userRequested = userService.findByUsername(username);
         Project projectRequested = projectRepository.findByUrl(repositoryUrl);

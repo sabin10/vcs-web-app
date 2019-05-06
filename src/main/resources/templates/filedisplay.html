@@ -3,7 +3,15 @@
 
 <body>
     <h4 th:text="${fileForm.fileName}">file name</h4>
-    <h6 th:text="${currentCommit.name}">current commit</h6>
+    <h5 th:text="'version at ' + ${currentCommit.name}">current commit</h5>
+    <div th:if="${currentCommit.id != lastCommit.id}">
+        <form th:action="@{'/' + ${username} + '/' + ${projectUrl} + '/'
+            + ${branchName} + '/' + ${fileForm.fileId} + '/' + ${currentCommit.id} + '/getprevious' }" method="get">
+            <input type="hidden" name="_method" value="button" />
+            <button type="submit" id="submitButton" class="btn btn-success">Come back to this version</button>
+        </form>
+    </div>
+    <br>
     <table class="table table-striped">
         <tr>
             <th>Commit</th>

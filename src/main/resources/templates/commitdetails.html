@@ -10,9 +10,10 @@
 
         <br>
         <div th:each="fileForm : ${fileForms}">
-            <h4 th:text="${fileForm.fileName}">file name</h4>
+            <h4><a th:text="${fileForm.fileName}"
+                   th:href="@{'/' + ${username} + '/' + ${projectUrl} + '/' + ${branchName} + '/file/'
+                    + ${fileForm.fileName}}">file name</a></h4>
             <pre style="
-                    /*background-color: #eee;*/
                     border: 1px solid #999;
                     display: block;
                     padding: 20px;">

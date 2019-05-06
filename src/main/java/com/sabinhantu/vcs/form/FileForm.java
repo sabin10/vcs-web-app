@@ -3,13 +3,15 @@ package com.sabinhantu.vcs.form;
 public class FileForm {
     String fileName;
     String fileData;
+    Long fileId;
 
     public FileForm() {
     }
 
-    public FileForm(String fileName, String fileData) {
+    public FileForm(String fileName, String fileData, Long fileId) {
         this.fileName = fileName;
         this.fileData = fileData;
+        this.fileId = fileId;
     }
 
     public String getFileName() {
@@ -31,4 +33,14 @@ public class FileForm {
     public void setFileData(String fileData) {
         this.fileData = fileData;
     }
+
+    public Long getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Long fileId) {
+        this.fileId = fileId;
+    }
 }
+
+
