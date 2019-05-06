@@ -62,13 +62,13 @@
                       <span>Add Repository</span>
                   </li>
 
-                  <li th:replace="::menuItem ('/owners/find','api','Get Api','console','RESTful API')">
-                      <span class="glyphicon glyphicon-console" aria-hidden="true"></span>
+                  <li sec:authorize="isAuthenticated()" th:replace="::menuItem ('/logout','logout','Logout Page','log-out','Logout')">
+                      <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
                       <span>Add Repository</span>
                   </li>
 
-                  <li th:replace="::menuItem ('/about','about','Docs','info-sign','About')">
-                      <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                  <li sec:authorize="!isAuthenticated()" th:replace="::menuItem ('/login','login','Login Page','log-in','Login')">
+                      <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
                       <span>Add Repository</span>
                   </li>
   <!---->

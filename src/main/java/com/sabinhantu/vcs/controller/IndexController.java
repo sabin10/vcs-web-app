@@ -16,9 +16,4 @@ public class IndexController {
         model.addAttribute("users", userService.findAll());
         return "index";
     }
-
-    @GetMapping("/about")
-    public String about() {
-        return "about";
-    }
 }
