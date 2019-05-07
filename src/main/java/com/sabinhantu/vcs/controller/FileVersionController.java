@@ -93,22 +93,22 @@ public class FileVersionController {
         branch.removeFile(file);
         branchRepository.save(branch);
 
-        // remove deltas of current file from branch's commits
-        for (Commit commit : branch.getCommits()) {
-            deleteDeltasOfFileFromInsideCommit(commit, fileId);
-
-            // remove commit from dbfile.commits
-            if (dbfileContainsCommitId(file, commit.getId())) {
-                file.getCommits().remove(commit);
-            }
-            dbFileRepository.save(file);
-
-            // if commit.deltaSimulateSet is empty => delete commit from branch and db
-            if (commit.getDeltaSimulateSet().isEmpty()) {
-                branch.removeCommit(commit);
-                branchRepository.save(branch);
-            }
-        }
+//        // remove deltas of current file from branch's commits
+//        for (Commit commit : branch.getCommits()) {
+//            deleteDeltasOfFileFromInsideCommit(commit, fileId);
+//
+//            // remove commit from dbfile.commits
+//            if (dbfileContainsCommitId(file, commit.getId())) {
+//                file.getCommits().remove(commit);
+//            }
+//            dbFileRepository.save(file);
+//
+//            // if commit.deltaSimulateSet is empty => delete commit from branch and db
+//            if (commit.getDeltaSimulateSet().isEmpty()) {
+//                branch.removeCommit(commit);
+//                branchRepository.save(branch);
+//            }
+//        }
         branchRepository.save(branch);
 
         return "redirect:/" + username + "/" + projectUrl + "/tree/" + branchName;
