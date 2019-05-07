@@ -1,6 +1,7 @@
 package com.sabinhantu.vcs.controller;
 
 import com.sabinhantu.vcs.model.*;
+import com.sabinhantu.vcs.repository.BranchRepository;
 import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.repository.UserRepository;
 import com.sabinhantu.vcs.service.UserService;
@@ -24,6 +25,12 @@ public class BranchController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProjectController projectController;
+
+    @Autowired
+    private BranchRepository branchRepository;
 
     @GetMapping("/{username}/{projectUrl}/tree/master")
     public String toMasterBranch(@PathVariable final String username,
@@ -54,6 +61,12 @@ public class BranchController {
                     // Retrieve files for current branch
                     Set<DBFile> files = getCurrentBranch(username, projectUrl, branchName).getFiles();
                     model.addAttribute("files", files);
+
+                    // has custom branch changes from master branch ?
+                    boolean newBranchHasChanges = projectController.
+                            customBranchDiffFromMaster(branch, getMasterBranch(username, projectUrl));
+
+                    model.addAttribute("newBranchHasChanges", newBranchHasChanges);
 
                     return "project";
                 }
@@ -105,6 +118,35 @@ public class BranchController {
         }
         return "redirect:/" + username + "/" + projectUrl + "/settings?branchnotexist";
     }
+
+    /** MERGE CUSTOM BRANCH TO MASTER**/
+    @GetMapping("/{username}/{projectUrl}/{currentBranchName}/mergetomaster")
+    public String mergeBranchToMaster(@PathVariable final String username,
+                                      @PathVariable final String projectUrl,
+                                      @PathVariable final String currentBranchName) {
+        Branch masterBranch = getMasterBranch(username, projectUrl);
+        Branch currentBranch = getCurrentBranch(username, projectUrl, currentBranchName);
+
+        // add to master commits surplus from current
+        for (Commit commit : currentBranch.getCommits()) {
+            if (!masterBranch.getCommits().contains(commit)) {
+                masterBranch.addCommit(commit);
+            }
+        }
+        branchRepository.save(masterBranch);
+
+        // add to master files from current
+        for (DBFile dbFile : currentBranch.getFiles()) {
+            if (!masterBranch.getFiles().contains(dbFile)) {
+                masterBranch.addFile(dbFile);
+            }
+        }
+        branchRepository.save(masterBranch);
+
+        return "redirect:/" + username + "/" + projectUrl;
+    }
+
+
 
     protected Branch getMasterBranch(String username, String projectUrl) {
         User user = userRepository.findByUsername(username);

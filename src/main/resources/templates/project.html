@@ -7,23 +7,38 @@
 
     <table class="table table-striped">
         <tr>
-            <th><a th:text="${commitsNumber} + ' commits'" th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/commits/' + ${currentBranch} }">commits</a></th>
+            <th><a th:text="${commitsNumber} + ' commits'" th:href="@{'/' + ${userRequested.username} + '/' +
+            ${project.url} + '/commits/' + ${currentBranch} }">commits</a></th>
             <th>
                 <details>
                     <summary th:text="${currentBranch}"></summary>
                     <ul>
                         <li th:each="branch : ${branches}">
-                            <a th:text="${branch.name}" th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/tree/' + ${branch.name}}">
+                            <a th:text="${branch.name}" th:href="@{'/' + ${userRequested.username} + '/' +
+                             ${project.url} + '/tree/' + ${branch.name}}">
 
                             </a>
                         </li>
                     </ul>
                 </details>
             </th>
-            <th th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/settings'}">Settings</a></th>
+            <th th:if="${userRequested.username == usernameLoggedIn}"><a th:href="@{'/' + ${userRequested.username} +
+            '/' + ${project.url} + '/settings'}">Settings</a></th>
         </tr>
     </table>
-    <h3><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/' + ${currentBranch} + '/addcommit'}">Create new commit</a></h3>
+    <div th:if="${currentBranch != 'master'}">
+        <div th:if="${newBranchHasChanges} == true">
+            <form th:action="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/'
+            + ${currentBranch} + '/mergetomaster' }" method="get">
+                <input type="hidden" name="_method" value="button" />
+                <button type="submit" id="submitButton" class="btn btn-success">Merge to master</button>
+            </form>
+        </div>
+    </div>
+
+    <br>
+    <h3><a th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/' + ${currentBranch} +
+    '/addcommit'}">Create new commit</a></h3>
 
     <table class="table table-striped">
         <tr>
@@ -31,7 +46,8 @@
             <th>Last Commit</th>
         </tr>
         <tr th:each="file : ${files}">
-            <td><a th:text="${file.fileName}" th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} + '/' + ${currentBranch} + '/file/' + ${file.fileName}}"></a></td>
+            <td><a th:text="${file.fileName}" th:href="@{'/' + ${userRequested.username} + '/' + ${project.url} +
+            '/' + ${currentBranch} + '/file/' + ${file.fileName}}"></a></td>
             <td th:text="${file.lastCommit.name}">Onions</td>
         </tr>
     </table>

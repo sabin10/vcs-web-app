@@ -1,9 +1,6 @@
 package com.sabinhantu.vcs.controller;
 
-import com.sabinhantu.vcs.model.Branch;
-import com.sabinhantu.vcs.model.DBFile;
-import com.sabinhantu.vcs.model.Project;
-import com.sabinhantu.vcs.model.User;
+import com.sabinhantu.vcs.model.*;
 import com.sabinhantu.vcs.repository.ProjectRepository;
 import com.sabinhantu.vcs.repository.UserRepository;
 import com.sabinhantu.vcs.service.UserService;
@@ -58,6 +55,11 @@ public class ProjectController {
         Set<DBFile> files = branchController.getMasterBranch(username, projectUrl).getFiles();
         model.addAttribute("files", files);
 
+//        Branch masterBranch = branchController.getMasterBranch(username, projectUrl);
+//        Branch customBranch
+
+        model.addAttribute("newBranchHasChanges", false);
+
         return "project";
     }
 
@@ -102,5 +104,17 @@ public class ProjectController {
         if (user.getProjects().contains(project))
             return true;
         return false;
+    }
+
+    protected boolean customBranchDiffFromMaster(Branch customBranch, Branch masterBranch) {
+        Set<Commit> cbCommits = customBranch.getCommits();
+        Set<Commit> mbCommits = masterBranch.getCommits();
+        if (cbCommits == null && mbCommits == null) {
+            return false;
+        }
+        if (cbCommits.size() != mbCommits.size()) {
+            return true;
+        }
+        return !mbCommits.containsAll(cbCommits);
     }
 }

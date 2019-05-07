@@ -125,15 +125,4 @@ public class FileVersionController {
         }
         commitRepository.save(commit);
     }
-
-    protected boolean dbfileContainsCommitId(DBFile file, Long commitId) {
-        for (Commit commit : file.getCommits()) {
-            if (commit.getId().equals(commitId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
 }
