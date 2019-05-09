@@ -17,7 +17,7 @@ Keeping in database only the changes occured, instead of the whole file. Each co
 + Create and update projects
 + Add more contributors to the same project, so more users can work at the same project
 + View user's projects list
-+ Branching and merging. Create a new branch for making independent changes from master and then merge those changes to master
++ Branching and merging. Create a new branch for making independent changes from master and then merge changes to master
 + Commiting. Save changes to the project and have choice to come back to a previous version from another commit
 
 ## How to build / run from Intellij
