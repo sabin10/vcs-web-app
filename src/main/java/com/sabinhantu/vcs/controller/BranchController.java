@@ -146,8 +146,6 @@ public class BranchController {
         return "redirect:/" + username + "/" + projectUrl;
     }
 
-
-
     protected Branch getMasterBranch(String username, String projectUrl) {
         User user = userRepository.findByUsername(username);
         Set<Project> projects = user.getProjects();
@@ -187,5 +185,4 @@ public class BranchController {
         }
         return true;
     }
-
 }

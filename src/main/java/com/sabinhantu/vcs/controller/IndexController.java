@@ -14,6 +14,7 @@ public class IndexController {
     @GetMapping({"", "/", "index"})
     public String index(Model model) {
         model.addAttribute("users", userService.findAll());
-        return "index";
+        String usernameLoggedIn = AccountController.loggedInUsername();
+        return "redirect:/" + usernameLoggedIn;
     }
 }

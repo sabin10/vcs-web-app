@@ -55,9 +55,6 @@ public class ProjectController {
         Set<DBFile> files = branchController.getMasterBranch(username, projectUrl).getFiles();
         model.addAttribute("files", files);
 
-//        Branch masterBranch = branchController.getMasterBranch(username, projectUrl);
-//        Branch customBranch
-
         model.addAttribute("newBranchHasChanges", false);
 
         return "project";
@@ -80,16 +77,6 @@ public class ProjectController {
         model.addAttribute("branches", branches);
         return "projectsettings";
     }
-
-//    protected Project getProjectByUrlAndUser(String username, String projectUrl) {
-//        User user = userService.findByUsername(username);
-//        for (Project project : user.getProjects()) {
-//            if (project.getUrl().equals(projectUrl)) {
-//                return project;
-//            }
-//        }
-//        return null;
-//    }
 
     protected boolean doesRepositoryExist(String username, String repositoryUrl) {
         User userRequested = userService.findByUsername(username);
