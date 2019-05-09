@@ -8,7 +8,7 @@ Keeping in database only the changes occured, instead of the whole file. Each co
 
 ## Stack of technologies
 + Spring Boot
-+ Hibernate, JPA, H2 datasource
++ Hibernate, JPA, H2 database
 + Thymeleaf, HTML, CSS, Bootstrap
 + java-diff-utils 3rd party library
 
