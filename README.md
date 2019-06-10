@@ -6,6 +6,8 @@ A Java Web App with Spring Framework which keeps track of each modification of a
 
 Keeping in database only the changes occured, instead of the whole file. Each commit keeps track only of changes occured in the new created commit to the last meaningful commit which improves efficiency in reconstruction of file's versions.
 
+Database Mapping -> https://i.imgur.com/gKBy9dx.jpg
+
 ## Stack of technologies
 + Spring Boot
 + Maven
