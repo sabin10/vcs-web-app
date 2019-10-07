@@ -9,7 +9,7 @@ Keeping in database only the changes occured, instead of the whole file. Each co
 Database Mapping -> https://i.imgur.com/gKBy9dx.jpg
 
 ## Stack of technologies
-+ Spring Boot
++ Spring
 + Maven
 + Hibernate, JPA, H2 database
 + Thymeleaf, HTML, CSS, Bootstrap
